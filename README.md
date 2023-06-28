@@ -1,5 +1,3 @@
-<img alt='GaraJão logo' src='https://i.imgur.com/vUomoO0.png' width="80" />
-
 # GaraJão API
 
 <p align='left'>
