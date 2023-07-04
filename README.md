@@ -5,49 +5,38 @@
   <img alt='version' src='https://img.shields.io/static/v1?label=version&message=v1.0&color=d58453&labelColor=555' />
 </p>
 
-##### Create the `.env` file with the parameters below in the root of the project
-```
-DB_HOST = localhost
-DB_PORT = 5432
-DB_USER = postgres
-DB_PASS = postgres
-DB_NAME = garajao
+##### Rename the `.env.example` file to `.env` and fill in the parameters
 
-PORT = 3000
-JWT_PASS = ABCD
-```
+## 📥 Installation and execution
+```bash
+# Cloning the repository and accessing the directory
+git clone https://github.com/GaraJao/api.git && cd api
 
-### Commands to run project
-##### 1. Install dependencies
-```
+# Installing the dependencies
 yarn install
-```
-##### 2. Generate database migration
-```
+
+# Generating database migration
 yarn migrate:generate
-```
-##### 3. Run migration on database
-```
+
+# Running migration on database
 yarn migrate:run
-```
-##### 4. Run database inserts
-```
+
+# Running database inserts
 yarn seed
-```
-##### 5. Run project
-```
+
+# Running project
 yarn dev
 ```
 
 ## 🛠️ Technologies
 
-- [x] NodeJS
-- [x] Typescript
-- [x] PostgreSQL
-- [x] TypeORM
-- [x] Express
+- [NodeJS](https://nodejs.org/en)
+- [Express](https://expressjs.com/pt-br/)
+- [Typescript](https://www.typescriptlang.org/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [TypeORM](https://typeorm.io/)
 
-## ⚙️ API endpoints
+## ⚙️ API documentation
 
 #### 1. USERS
 

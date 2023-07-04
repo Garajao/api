@@ -23,7 +23,7 @@ export class GateController {
             where: { id: idGate }
         })
 
-        return res.json(gates);
+        return res.json({ provisional_open: gates?.provisional_open });
     }
 
     async filterByUser(req: Request, res: Response) {
