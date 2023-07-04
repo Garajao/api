@@ -18,7 +18,7 @@ class GateController {
         const gates = await gateRepository_1.gateRepository.findOne({
             where: { id: idGate }
         });
-        return res.json(gates);
+        return res.json({ provisional_open: gates === null || gates === void 0 ? void 0 : gates.provisional_open });
     }
     async filterByUser(req, res) {
         const { idUser } = req.params;
