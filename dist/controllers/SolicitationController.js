@@ -17,7 +17,7 @@ class SolicitationController {
         return res.json(solicitations);
     }
     async create(req, res) {
-        let { status, method, message, code, valid, user_id } = req.body;
+        let { status, message, code, valid, user_id } = req.body;
         const { idGate } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: user_id !== null && user_id !== void 0 ? user_id : "00000000-0000-0000-0000-000000000000" });
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
@@ -25,17 +25,15 @@ class SolicitationController {
             relations: { gate: true },
             where: { gate: { id: idGate }, valid: false },
         });
-        if (!method)
-            throw new api_errors_1.BadRequestError('Method is required');
         if (!message)
             throw new api_errors_1.BadRequestError('Message is required');
         if (!gate)
             throw new api_errors_1.NotFoundError('The gate does not exist');
-        if (method == "APP") {
+        if (code) {
             status = !gate.open;
         }
         const newSolicitation = solicitationRepository_1.solicitationRepository.create({
-            status, method, message, code, valid, gate, user
+            status, message, code, valid, gate, user
         });
         if (!valid) {
             if (solicitation)
@@ -48,13 +46,13 @@ class SolicitationController {
         return res.status(201).json({ id: newSolicitation.id });
     }
     async update(req, res) {
-        const { status, method, message, code, valid } = req.body;
+        const { status, message, code, valid } = req.body;
         const { idSolicitation } = req.params;
         const solicitation = await solicitationRepository_1.solicitationRepository.findOneBy({ id: idSolicitation });
         if (!solicitation)
             throw new api_errors_1.NotFoundError('The solicitation does not exist');
         await solicitationRepository_1.solicitationRepository.update(idSolicitation, {
-            status, method, message, code, valid
+            status, message, code, valid
         });
         return res.status(204).send();
     }

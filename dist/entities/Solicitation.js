@@ -25,10 +25,6 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Solicitation.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'text' }),
-    __metadata("design:type", String)
-], Solicitation.prototype, "method", void 0);
-__decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", String)
 ], Solicitation.prototype, "code", void 0);

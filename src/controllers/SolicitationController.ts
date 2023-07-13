@@ -18,7 +18,7 @@ export class SolicitationController {
     }
 
     async create(req: Request, res: Response) {
-        let { status, method, message, code, valid, user_id } = req.body
+        let { status, message, code, valid, user_id } = req.body
         const { idGate } = req.params
 
         const user = await userRepository.findOneBy({ id: user_id ?? "00000000-0000-0000-0000-000000000000" })
@@ -28,21 +28,18 @@ export class SolicitationController {
             where: { gate: { id: idGate }, valid: false },
         });
 
-        if (!method)
-            throw new BadRequestError('Method is required')
-
         if (!message)
             throw new BadRequestError('Message is required')
 
         if (!gate)
             throw new NotFoundError('The gate does not exist')
 
-        if (method == "APP") {
-            status = !gate.open;
+        if (code) {
+            status = !gate.open
         }
 
         const newSolicitation = solicitationRepository.create({
-            status, method, message, code, valid, gate, user
+            status, message, code, valid, gate, user
         })
 
         if (!valid) {
@@ -60,7 +57,7 @@ export class SolicitationController {
 
     async update(req: Request, res: Response) {
 
-        const { status, method, message, code, valid } = req.body
+        const { status, message, code, valid } = req.body
         const { idSolicitation } = req.params
 
         const solicitation = await solicitationRepository.findOneBy({ id: idSolicitation })
@@ -69,7 +66,7 @@ export class SolicitationController {
             throw new NotFoundError('The solicitation does not exist')
 
         await solicitationRepository.update(idSolicitation, {
-            status, method, message, code, valid
+            status, message, code, valid
         });
 
         return res.status(204).send()

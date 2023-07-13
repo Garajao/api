@@ -11,9 +11,6 @@ export class Solicitation {
     @Column({ type: 'boolean', default: false })
     status: Boolean
 
-    @Column({ type: 'text' })
-    method: string
-
     @Column({ type: 'text', nullable: true })
     code: string
 
