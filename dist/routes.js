@@ -34,6 +34,6 @@ routes.patch('/roles/:idRole', new RoleController_1.RoleController().update);
 routes.delete('/roles/:idRole', new RoleController_1.RoleController().delete);
 routes.get('/messages', new MessageController_1.MessageController().list);
 routes.post('/messages', new MessageController_1.MessageController().create);
-routes.patch('/messages/:idRole', new MessageController_1.MessageController().update);
-routes.delete('/messages/:idRole', new MessageController_1.MessageController().delete);
+routes.patch('/messages/:idMessage', new MessageController_1.MessageController().update);
+routes.delete('/messages/:idMessage', new MessageController_1.MessageController().delete);
 exports.default = routes;

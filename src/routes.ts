@@ -40,7 +40,7 @@ routes.delete('/roles/:idRole', new RoleController().delete)
 
 routes.get('/messages', new MessageController().list)
 routes.post('/messages', new MessageController().create)
-routes.patch('/messages/:idRole', new MessageController().update)
-routes.delete('/messages/:idRole', new MessageController().delete)
+routes.patch('/messages/:idMessage', new MessageController().update)
+routes.delete('/messages/:idMessage', new MessageController().delete)
 
 export default routes
