@@ -23,9 +23,9 @@ class GateSeeder {
                 provisional_open: false,
                 cep: '14096-900',
                 address: 'Av. Costábile Romano',
-                complement: 'Sala 24B',
+                complement: '',
                 number: 2201,
-                city: 'Ribeirão Preto',
+                city: 'Guarujá',
                 uf: 'SP'
             }];
         const newGates = gateRepository.create(gatesData);

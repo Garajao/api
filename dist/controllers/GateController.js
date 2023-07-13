@@ -67,6 +67,21 @@ class GateController {
         await gateRepository_1.gateRepository.delete(idGate);
         return res.status(204).send();
     }
+    async validSolicitations(req, res) {
+        const { status } = req.body;
+        const { idGate } = req.params;
+        const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
+        if (!gate)
+            throw new api_errors_1.NotFoundError('The gate does not exist');
+        const solicitations = await solicitationRepository_1.solicitationRepository.find({
+            where: { gate: { id: idGate }, valid: false }
+        });
+        solicitations.map(async (solicitation) => {
+            await solicitationRepository_1.solicitationRepository.update(solicitation.id, { valid: true, message: status ? "Abrindo portão" : "Fechando portão" });
+        });
+        await gateRepository_1.gateRepository.update(idGate, { open: status });
+        return res.status(204).send();
+    }
     async paging(req, res) {
         const { idGate } = req.params;
         const { offset, limit } = req.query;

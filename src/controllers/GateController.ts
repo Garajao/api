@@ -3,6 +3,7 @@ import { gateRepository } from "../repositories/gateRepository";
 import { userRepository } from "../repositories/userRepository";
 import { BadRequestError, NotFoundError } from "../helpers/api-errors";
 import { solicitationRepository } from "../repositories/solicitationRepository";
+import { Solicitation } from "../entities/Solicitation";
 
 export class GateController {
     async list(req: Request, res: Response) {
@@ -68,7 +69,6 @@ export class GateController {
     }
 
     async update(req: Request, res: Response) {
-
         const { name, open, provisional_open, cep, address, complement, number, city, uf } = req.body
         const { idGate } = req.params
 
@@ -93,6 +93,27 @@ export class GateController {
             throw new NotFoundError('The gate does not exist')
 
         await gateRepository.delete(idGate);
+
+        return res.status(204).send()
+    }
+
+    async validSolicitations(req: Request, res: Response) {
+        const { status } = req.body
+        const { idGate } = req.params
+
+        const gate = await gateRepository.findOneBy({ id: idGate })
+
+        if (!gate)
+            throw new NotFoundError('The gate does not exist')
+
+        const solicitations = await solicitationRepository.find({
+            where: { gate: { id: idGate }, valid: false }
+        })
+
+        solicitations.map(async (solicitation) => {
+            await solicitationRepository.update(solicitation.id, { valid: true, message: status ? "Abrindo portão" : "Fechando portão" });
+        })
+        await gateRepository.update(idGate, { open: status });
 
         return res.status(204).send()
     }

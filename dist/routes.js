@@ -21,6 +21,7 @@ routes.get('/gates/:idUser/user', new GateController_1.GateController().filterBy
 routes.post('/gates', new GateController_1.GateController().create);
 routes.patch('/gates/:idGate', new GateController_1.GateController().update);
 routes.delete('/gates/:idGate', new GateController_1.GateController().delete);
+routes.patch('/gates/:idGate/solicitations/valid', new GateController_1.GateController().validSolicitations);
 routes.get('/gates/:idGate/solicitations', new GateController_1.GateController().paging);
 routes.get('/solicitations', new SolicitationController_1.SolicitationController().list);
 routes.post('/solicitations/:idGate/gate', new SolicitationController_1.SolicitationController().create);
