@@ -29,7 +29,7 @@ class SolicitationController {
             throw new api_errors_1.BadRequestError('Message is required');
         if (!gate)
             throw new api_errors_1.NotFoundError('The gate does not exist');
-        if (code) {
+        if (!code) {
             status = !gate.open;
         }
         const newSolicitation = solicitationRepository_1.solicitationRepository.create({

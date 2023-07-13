@@ -34,7 +34,7 @@ export class SolicitationController {
         if (!gate)
             throw new NotFoundError('The gate does not exist')
 
-        if (code) {
+        if (!code) {
             status = !gate.open
         }
 
