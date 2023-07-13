@@ -18,7 +18,7 @@ class SolicitationController {
     async create(req, res) {
         let { status, method, status_code, message, code, valid, user_id } = req.body;
         const { idGate } = req.params;
-        const user = await userRepository_1.userRepository.findOneBy({ id: user_id });
+        const user = await userRepository_1.userRepository.findOneBy({ id: user_id !== null && user_id !== void 0 ? user_id : "00000000-0000-0000-0000-000000000000" });
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
         const solicitation = await solicitationRepository_1.solicitationRepository.findOne({
             relations: { gate: true },

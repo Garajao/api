@@ -67,6 +67,8 @@ class UserController {
         const user = await userRepository_1.userRepository.findOne({ relations: { gates: true }, where: { id: idUser } });
         if (!user)
             throw new api_errors_1.NotFoundError('The user does not exist');
+        if (!gate_id)
+            throw new api_errors_1.BadRequestError('Gate is required');
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: gate_id });
         if (!gate)
             throw new api_errors_1.NotFoundError('The gate does not exist');

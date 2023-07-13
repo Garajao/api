@@ -15,10 +15,7 @@ class GateController {
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
         if (!gate)
             throw new api_errors_1.NotFoundError('The gate does not exist');
-        const gates = await gateRepository_1.gateRepository.findOne({
-            where: { id: idGate }
-        });
-        return res.json({ provisional_open: gates === null || gates === void 0 ? void 0 : gates.provisional_open });
+        return res.json({ provisional_open: gate === null || gate === void 0 ? void 0 : gate.provisional_open });
     }
     async filterByUser(req, res) {
         const { idUser } = req.params;
@@ -26,7 +23,8 @@ class GateController {
         if (!user)
             throw new api_errors_1.NotFoundError('The user does not exist');
         const gates = await gateRepository_1.gateRepository.find({
-            where: { users: { id: idUser } }
+            where: { users: { id: idUser } },
+            order: { updated_at: 'DESC', }
         });
         return res.json(gates);
     }

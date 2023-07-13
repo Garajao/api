@@ -92,6 +92,9 @@ export class UserController {
         if (!user)
             throw new NotFoundError('The user does not exist')
 
+        if (!gate_id)
+            throw new BadRequestError('Gate is required')
+
         const gate = await gateRepository.findOneBy({ id: gate_id })
 
         if (!gate)
