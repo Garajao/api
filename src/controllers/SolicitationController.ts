@@ -9,7 +9,8 @@ export class SolicitationController {
         const solicitations = await solicitationRepository.find({
             relations: {
                 gate: true,
-                user: true
+                user: true,
+                message: true
             }
         })
 
@@ -17,7 +18,7 @@ export class SolicitationController {
     }
 
     async create(req: Request, res: Response) {
-        let { status, method, status_code, message, code, valid, user_id } = req.body
+        let { status, method, message, code, valid, user_id } = req.body
         const { idGate } = req.params
 
         const user = await userRepository.findOneBy({ id: user_id ?? "00000000-0000-0000-0000-000000000000" })
@@ -30,9 +31,6 @@ export class SolicitationController {
         if (!method)
             throw new BadRequestError('Method is required')
 
-        if (!status_code)
-            throw new BadRequestError('Code is required')
-
         if (!message)
             throw new BadRequestError('Message is required')
 
@@ -44,7 +42,7 @@ export class SolicitationController {
         }
 
         const newSolicitation = solicitationRepository.create({
-            status, method, status_code, message, code, valid, gate, user
+            status, method, message, code, valid, gate, user
         })
 
         if (!valid) {
@@ -62,7 +60,7 @@ export class SolicitationController {
 
     async update(req: Request, res: Response) {
 
-        const { status, method, status_code, message, code, valid } = req.body
+        const { status, method, message, code, valid } = req.body
         const { idSolicitation } = req.params
 
         const solicitation = await solicitationRepository.findOneBy({ id: idSolicitation })
@@ -71,7 +69,7 @@ export class SolicitationController {
             throw new NotFoundError('The solicitation does not exist')
 
         await solicitationRepository.update(idSolicitation, {
-            status, method, status_code, message, code, valid
+            status, method, message, code, valid
         });
 
         return res.status(204).send()

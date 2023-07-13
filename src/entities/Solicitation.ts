@@ -1,6 +1,7 @@
-import { Column, PrimaryGeneratedColumn, JoinColumn, Entity, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, JoinColumn, Entity, ManyToOne, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 import { Gate } from './Gate';
 import { User } from './User';
+import { Message } from './Message';
 
 @Entity('solicitations')
 export class Solicitation {
@@ -12,12 +13,6 @@ export class Solicitation {
 
     @Column({ type: 'text' })
     method: string
-
-    @Column({ type: 'int' })
-    status_code: number
-
-    @Column({ type: 'text' })
-    message: string
 
     @Column({ type: 'text', nullable: true })
     code: string
@@ -31,11 +26,15 @@ export class Solicitation {
     @UpdateDateColumn({ type: 'timestamptz' })
     updated_at: Date
 
-    @ManyToOne(() => Gate, gate => gate.solicitations)
+    @ManyToOne(() => Gate, gate => gate.solicitations, { nullable: false })
     @JoinColumn({ name: 'gate_id' })
     gate: Gate
 
     @ManyToOne(() => User, user => user.solicitations)
     @JoinColumn({ name: 'user_id' })
     user: User | null
+
+    @ManyToOne(() => Message, message => message.solicitations, { nullable: false })
+    @JoinColumn({ name: 'message_id' })
+    message: Message | number;
 }

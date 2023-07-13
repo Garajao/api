@@ -77,7 +77,7 @@ class GateController {
             where: { gate: { id: idGate }, valid: false }
         });
         solicitations.map(async (solicitation) => {
-            await solicitationRepository_1.solicitationRepository.update(solicitation.id, { valid: true, message: status ? "Abrindo portão" : "Fechando portão" });
+            await solicitationRepository_1.solicitationRepository.update(solicitation.id, { valid: true, message: status ? 1 : 2 });
         });
         await gateRepository_1.gateRepository.update(idGate, { open: status });
         return res.status(204).send();
@@ -89,7 +89,7 @@ class GateController {
         if (!gate)
             throw new api_errors_1.NotFoundError('The gate does not exist');
         const solicitations = await solicitationRepository_1.solicitationRepository.find({
-            relations: { user: true, gate: true },
+            relations: { user: true, gate: true, message: true },
             where: { gate: { id: idGate } },
             order: { updated_at: 'DESC', }, skip: Number(offset), take: Number(limit)
         });

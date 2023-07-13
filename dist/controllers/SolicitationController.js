@@ -10,13 +10,14 @@ class SolicitationController {
         const solicitations = await solicitationRepository_1.solicitationRepository.find({
             relations: {
                 gate: true,
-                user: true
+                user: true,
+                message: true
             }
         });
         return res.json(solicitations);
     }
     async create(req, res) {
-        let { status, method, status_code, message, code, valid, user_id } = req.body;
+        let { status, method, message, code, valid, user_id } = req.body;
         const { idGate } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: user_id !== null && user_id !== void 0 ? user_id : "00000000-0000-0000-0000-000000000000" });
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
@@ -26,8 +27,6 @@ class SolicitationController {
         });
         if (!method)
             throw new api_errors_1.BadRequestError('Method is required');
-        if (!status_code)
-            throw new api_errors_1.BadRequestError('Code is required');
         if (!message)
             throw new api_errors_1.BadRequestError('Message is required');
         if (!gate)
@@ -36,7 +35,7 @@ class SolicitationController {
             status = !gate.open;
         }
         const newSolicitation = solicitationRepository_1.solicitationRepository.create({
-            status, method, status_code, message, code, valid, gate, user
+            status, method, message, code, valid, gate, user
         });
         if (!valid) {
             if (solicitation)
@@ -49,13 +48,13 @@ class SolicitationController {
         return res.status(201).json({ id: newSolicitation.id });
     }
     async update(req, res) {
-        const { status, method, status_code, message, code, valid } = req.body;
+        const { status, method, message, code, valid } = req.body;
         const { idSolicitation } = req.params;
         const solicitation = await solicitationRepository_1.solicitationRepository.findOneBy({ id: idSolicitation });
         if (!solicitation)
             throw new api_errors_1.NotFoundError('The solicitation does not exist');
         await solicitationRepository_1.solicitationRepository.update(idSolicitation, {
-            status, method, status_code, message, code, valid
+            status, method, message, code, valid
         });
         return res.status(204).send();
     }

@@ -4,6 +4,7 @@ import { gateRepository } from '../repositories/gateRepository';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../helpers/api-errors';
+import { roleRepository } from '../repositories/roleRepository';
 
 export class UserController {
     async list(req: Request, res: Response) {
@@ -15,7 +16,7 @@ export class UserController {
     }
 
     async create(req: Request, res: Response) {
-        const { name, email, login, password } = req.body
+        const { name, email, login, password, role_id } = req.body
 
         if (!name)
             throw new BadRequestError('Name is required')
@@ -29,6 +30,9 @@ export class UserController {
         if (!password)
             throw new BadRequestError('Password is required')
 
+        if (!role_id)
+            throw new BadRequestError('Role is required')
+
         const loginExists = await userRepository.findOneBy({ login })
 
         if (loginExists)
@@ -41,8 +45,13 @@ export class UserController {
 
         const hashPassword = await bcrypt.hash(password, 10);
 
+        const role = await roleRepository.findOneBy({ id: role_id })
+
+        if (!role)
+            throw new NotFoundError('The role does not exist')
+
         const newUser = userRepository.create({
-            name, email, login, password: hashPassword, active: true
+            name, email, login, password: hashPassword, active: true, role
         })
 
         await userRepository.save(newUser);
@@ -51,13 +60,18 @@ export class UserController {
     }
 
     async update(req: Request, res: Response) {
-        const { name, email, active, role } = req.body
+        const { name, email, active, role_id } = req.body
         const { idUser } = req.params
 
         const user = await userRepository.findOneBy({ id: idUser })
 
         if (!user)
             throw new NotFoundError('The user does not exist')
+
+        const role = await roleRepository.findOneBy({ id: role_id })
+
+        if (!role)
+            throw new NotFoundError('The role does not exist')
 
         await userRepository.update(idUser, {
             name, email, active, role

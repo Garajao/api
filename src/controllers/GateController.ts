@@ -3,7 +3,7 @@ import { gateRepository } from "../repositories/gateRepository";
 import { userRepository } from "../repositories/userRepository";
 import { BadRequestError, NotFoundError } from "../helpers/api-errors";
 import { solicitationRepository } from "../repositories/solicitationRepository";
-import { Solicitation } from "../entities/Solicitation";
+import { messageRepository } from "../repositories/messageRepository";
 
 export class GateController {
     async list(req: Request, res: Response) {
@@ -111,7 +111,7 @@ export class GateController {
         })
 
         solicitations.map(async (solicitation) => {
-            await solicitationRepository.update(solicitation.id, { valid: true, message: status ? "Abrindo portão" : "Fechando portão" });
+            await solicitationRepository.update(solicitation.id, { valid: true, message: status ? 1 : 2 });
         })
         await gateRepository.update(idGate, { open: status });
 
@@ -128,7 +128,7 @@ export class GateController {
             throw new NotFoundError('The gate does not exist')
 
         const solicitations = await solicitationRepository.find({
-            relations: { user: true, gate: true },
+            relations: { user: true, gate: true, message: true },
             where: { gate: { id: idGate } },
             order: { updated_at: 'DESC', }, skip: Number(offset), take: Number(limit)
         })

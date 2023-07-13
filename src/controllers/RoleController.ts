@@ -4,7 +4,11 @@ import { roleRepository } from "../repositories/roleRepository";
 
 export class RoleController {
     async list(req: Request, res: Response) {
-        const roles = await roleRepository.find()
+        const roles = await roleRepository.find({
+            relations: {
+                users: true
+            }
+        })
 
         return res.json(roles);
     }

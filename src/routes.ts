@@ -4,6 +4,7 @@ import { GateController } from './controllers/GateController'
 import { SolicitationController } from './controllers/SolicitationController'
 import { authMiddleware } from './middlewares/authMiddleware'
 import { RoleController } from './controllers/RoleController'
+import { MessageController } from './controllers/MessageController'
 
 const routes = Router()
 
@@ -37,5 +38,9 @@ routes.post('/roles', new RoleController().create)
 routes.patch('/roles/:idRole', new RoleController().update)
 routes.delete('/roles/:idRole', new RoleController().delete)
 
+routes.get('/messages', new MessageController().list)
+routes.post('/messages', new MessageController().create)
+routes.patch('/messages/:idRole', new MessageController().update)
+routes.delete('/messages/:idRole', new MessageController().delete)
 
 export default routes

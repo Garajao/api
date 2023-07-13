@@ -1,4 +1,4 @@
-import { Column, PrimaryGeneratedColumn, Entity, OneToOne, OneToMany, JoinColumn, ManyToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, Entity, OneToOne, OneToMany, JoinColumn, ManyToMany, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Gate } from './Gate';
 import { Solicitation } from './Solicitation';
 import { Role } from './Role';
@@ -23,10 +23,6 @@ export class User {
     @Column({ type: 'boolean' })
     active: boolean
 
-    @OneToOne(() => Role, { cascade: true })
-    @JoinColumn({ name: 'role_id' })
-    role: Role;
-
     @CreateDateColumn({ type: 'timestamptz' })
     created_at: Date
 
@@ -38,4 +34,8 @@ export class User {
 
     @OneToMany(() => Solicitation, solicitation => solicitation.user)
     solicitations: Solicitation[]
+
+    @ManyToOne(() => Role, role => role.users, { nullable: false })
+    @JoinColumn({ name: 'role_id' })
+    role: Role;
 }

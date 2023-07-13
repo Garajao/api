@@ -9,6 +9,7 @@ const gateRepository_1 = require("../repositories/gateRepository");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const api_errors_1 = require("../helpers/api-errors");
+const roleRepository_1 = require("../repositories/roleRepository");
 class UserController {
     async list(req, res) {
         const users = await userRepository_1.userRepository.find({
@@ -17,7 +18,7 @@ class UserController {
         return res.status(200).json(users);
     }
     async create(req, res) {
-        const { name, email, login, password } = req.body;
+        const { name, email, login, password, role_id } = req.body;
         if (!name)
             throw new api_errors_1.BadRequestError('Name is required');
         if (!email)
@@ -26,6 +27,8 @@ class UserController {
             throw new api_errors_1.BadRequestError('Login is required');
         if (!password)
             throw new api_errors_1.BadRequestError('Password is required');
+        if (!role_id)
+            throw new api_errors_1.BadRequestError('Role is required');
         const loginExists = await userRepository_1.userRepository.findOneBy({ login });
         if (loginExists)
             throw new api_errors_1.BadRequestError('User login already exists');
@@ -33,18 +36,24 @@ class UserController {
         if (emailExists)
             throw new api_errors_1.BadRequestError('User email already existse');
         const hashPassword = await bcrypt_1.default.hash(password, 10);
+        const role = await roleRepository_1.roleRepository.findOneBy({ id: role_id });
+        if (!role)
+            throw new api_errors_1.NotFoundError('The role does not exist');
         const newUser = userRepository_1.userRepository.create({
-            name, email, login, password: hashPassword, active: true
+            name, email, login, password: hashPassword, active: true, role
         });
         await userRepository_1.userRepository.save(newUser);
         return res.status(201).json({ id: newUser.id });
     }
     async update(req, res) {
-        const { name, email, active, role } = req.body;
+        const { name, email, active, role_id } = req.body;
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
         if (!user)
             throw new api_errors_1.NotFoundError('The user does not exist');
+        const role = await roleRepository_1.roleRepository.findOneBy({ id: role_id });
+        if (!role)
+            throw new api_errors_1.NotFoundError('The role does not exist');
         await userRepository_1.userRepository.update(idUser, {
             name, email, active, role
         });

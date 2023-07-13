@@ -41,11 +41,6 @@ __decorate([
     __metadata("design:type", Boolean)
 ], User.prototype, "active", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => Role_1.Role, { cascade: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'role_id' }),
-    __metadata("design:type", Role_1.Role)
-], User.prototype, "role", void 0);
-__decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamptz' }),
     __metadata("design:type", Date)
 ], User.prototype, "created_at", void 0);
@@ -61,6 +56,11 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => Solicitation_1.Solicitation, solicitation => solicitation.user),
     __metadata("design:type", Array)
 ], User.prototype, "solicitations", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Role_1.Role, role => role.users, { nullable: false }),
+    (0, typeorm_1.JoinColumn)({ name: 'role_id' }),
+    __metadata("design:type", Role_1.Role)
+], User.prototype, "role", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users')
 ], User);

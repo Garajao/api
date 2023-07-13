@@ -1,16 +1,13 @@
 import { Column, PrimaryGeneratedColumn, Entity, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { User } from './User';
+import { Solicitation } from './Solicitation';
 
-@Entity('roles')
-export class Role {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+@Entity('messages')
+export class Message {
+    @PrimaryGeneratedColumn()
+    id: number
 
     @Column({ type: 'text' })
-    name: string
-
-    @Column({ type: 'int' })
-    level: number
+    description: string
 
     @CreateDateColumn({ type: 'timestamptz' })
     created_at: Date
@@ -18,6 +15,6 @@ export class Role {
     @UpdateDateColumn({ type: 'timestamptz' })
     updated_at: Date
 
-    @OneToMany(() => User, user => user.role)
-    users: User[]
+    @OneToMany(() => Solicitation, solicitation => solicitation.message)
+    solicitations: Solicitation[]
 }

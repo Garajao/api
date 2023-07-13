@@ -5,7 +5,11 @@ const api_errors_1 = require("../helpers/api-errors");
 const roleRepository_1 = require("../repositories/roleRepository");
 class RoleController {
     async list(req, res) {
-        const roles = await roleRepository_1.roleRepository.find();
+        const roles = await roleRepository_1.roleRepository.find({
+            relations: {
+                users: true
+            }
+        });
         return res.json(roles);
     }
     async create(req, res) {
