@@ -1,11 +1,14 @@
-# GaraJão API
-
-<p align='left'>
-  <img alt='License' src='https://img.shields.io/static/v1?label=license&message=MIT&color=d58453&labelColor=555' />
-  <img alt='version' src='https://img.shields.io/static/v1?label=version&message=v1.0&color=d58453&labelColor=555' />
+<p align="center">
+  <a>
+    <img alt="preview" src="https://i.imgur.com/wkgf1TH.png" width="100%">
+  </a>
 </p>
 
-##### Rename the `.env.example` file to `.env` and fill in the parameters
+<p align='center'>
+  <img alt='License' src='https://img.shields.io/badge/license-mit-1C1E26?style=for-the-badge&labelColor=1C1E26&color=d58453&' />
+  <img alt='version' src='https://img.shields.io/badge/version-v1.0-1C1E26?style=for-the-badge&labelColor=1C1E26&color=d58453&' />
+</p>
+
 
 ## 📥 Installation and execution
 ```bash
@@ -27,6 +30,7 @@ yarn seed
 # Running project
 yarn dev
 ```
+##### Rename the `.env.example` file to `.env` and fill in the parameters
 
 ## 🛠️ Technologies
 

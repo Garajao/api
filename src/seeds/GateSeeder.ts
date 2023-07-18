@@ -19,7 +19,7 @@ export class GateSeeder implements Seeder {
             uf: 'SP'
         }, {
             id: 'ace9f0ff-1b73-41a5-952e-3b5a3154b611',
-            name: 'Casa na praia',
+            name: 'Beach house',
             open: false,
             provisional_open: false,
             cep: '14096-900',
