@@ -30,6 +30,8 @@ class GateController {
             .leftJoinAndSelect('users.role', 'role')
             .where('user.id = :id', { id: idUser })
             .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST')
+            .addOrderBy('role.level', 'ASC')
+            .addOrderBy('users.name', 'ASC')
             .getMany();
         return res.json(gates);
     }
