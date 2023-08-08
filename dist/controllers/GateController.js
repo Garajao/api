@@ -27,6 +27,7 @@ class GateController {
             .leftJoinAndMapOne('gate.solicitations', Solicitation_1.Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id')
             .leftJoin('gate.users', 'user')
             .leftJoinAndSelect('gate.users', 'users')
+            .leftJoinAndSelect('users.role', 'role')
             .where('user.id = :id', { id: idUser })
             .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST')
             .getMany();
