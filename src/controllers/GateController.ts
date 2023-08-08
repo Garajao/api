@@ -4,6 +4,7 @@ import { userRepository } from '../repositories/userRepository';
 import { BadRequestError, NotFoundError } from '../helpers/api-errors';
 import { solicitationRepository } from '../repositories/solicitationRepository';
 import { Solicitation } from '../entities/Solicitation';
+import { User } from '../entities/User';
 
 export class GateController {
     async list(req: Request, res: Response) {
@@ -33,9 +34,11 @@ export class GateController {
 
         const gates = await gateRepository.createQueryBuilder('gate')
         .leftJoinAndMapOne('gate.solicitations', Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id')
+        .leftJoin('gate.users', 'user')
         .leftJoinAndSelect('gate.users', 'users')
-        .where('users.id = :id', { id: idUser })
-        .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST').getMany()
+        .where('user.id = :id', { id: idUser })
+        .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST')
+        .getMany()
 
         return res.json(gates);
     }

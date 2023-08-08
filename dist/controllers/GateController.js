@@ -25,9 +25,11 @@ class GateController {
             throw new api_errors_1.NotFoundError('The user does not exist');
         const gates = await gateRepository_1.gateRepository.createQueryBuilder('gate')
             .leftJoinAndMapOne('gate.solicitations', Solicitation_1.Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id')
+            .leftJoin('gate.users', 'user')
             .leftJoinAndSelect('gate.users', 'users')
-            .where('users.id = :id', { id: idUser })
-            .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST').getMany();
+            .where('user.id = :id', { id: idUser })
+            .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST')
+            .getMany();
         return res.json(gates);
     }
     async create(req, res) {
