@@ -23,6 +23,9 @@ export class User {
     @Column({ type: 'boolean' })
     active: boolean
 
+    @Column({ type: 'text', nullable: true })
+    image: string
+
     @CreateDateColumn({ type: 'timestamptz' })
     created_at: Date
 

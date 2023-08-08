@@ -80,6 +80,10 @@ export class SolicitationController {
         if (!solicitation)
             throw new NotFoundError('The solicitation does not exist')
 
+        if (solicitation.valid)
+            throw new NotFoundError('A valid solicitation cannot be deleted')
+
+
         await solicitationRepository.delete(idSolicitation);
 
         return res.status(204).send()

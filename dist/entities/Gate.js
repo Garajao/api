@@ -56,6 +56,10 @@ __decorate([
     __metadata("design:type", String)
 ], Gate.prototype, "uf", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], Gate.prototype, "image", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamptz' }),
     __metadata("design:type", Date)
 ], Gate.prototype, "created_at", void 0);

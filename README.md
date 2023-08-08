@@ -6,14 +6,14 @@
 
 <p align='center'>
   <img alt='License' src='https://img.shields.io/badge/license-mit-1C1E26?style=for-the-badge&labelColor=1C1E26&color=d58453&' />
-  <img alt='version' src='https://img.shields.io/badge/version-v1.0-1C1E26?style=for-the-badge&labelColor=1C1E26&color=d58453&' />
+  <img alt='version' src='https://img.shields.io/badge/version-1.0-1C1E26?style=for-the-badge&labelColor=1C1E26&color=d58453&' />
 </p>
 
 
 ## 📥 Installation and execution
 ```bash
 # Cloning the repository and accessing the directory
-git clone https://github.com/GaraJao/api.git && cd api
+git clone git@github.com:GaraJao/api.git && cd api
 
 # Installing the dependencies
 yarn install
@@ -30,7 +30,7 @@ yarn seed
 # Running project
 yarn dev
 ```
-##### Rename the `.env.example` file to `.env` and fill in the parameters
+##### Rename the `.env.example` file to `.env` and fill in the parameters.
 
 ## 🛠️ Technologies
 
@@ -83,3 +83,6 @@ List roles | `GET` | /api/roles
 Create role | `POST` | /api/roles
 Update role | `PATCH` | /api/roles/`:idRole`
 Delete role | `DELETE` | /api/roles/`:idRole`
+
+## 📄 License
+MIT © Matheus Bonadio

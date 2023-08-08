@@ -16,7 +16,7 @@ export class UserController {
     }
 
     async create(req: Request, res: Response) {
-        const { name, email, login, password, role_id } = req.body
+        const { name, email, login, password, image, role_id } = req.body
 
         if (!name)
             throw new BadRequestError('Name is required')
@@ -51,7 +51,7 @@ export class UserController {
             throw new NotFoundError('The role does not exist')
 
         const newUser = userRepository.create({
-            name, email, login, password: hashPassword, active: true, role
+            name, email, login, password: hashPassword, active: true, image, role
         })
 
         await userRepository.save(newUser);
@@ -60,7 +60,7 @@ export class UserController {
     }
 
     async update(req: Request, res: Response) {
-        const { name, email, active, role_id } = req.body
+        const { name, email, active, image, role_id } = req.body
         const { idUser } = req.params
 
         const user = await userRepository.findOneBy({ id: idUser })
@@ -74,7 +74,7 @@ export class UserController {
             throw new NotFoundError('The role does not exist')
 
         await userRepository.update(idUser, {
-            name, email, active, role
+            name, email, active, image, role
         });
 
         return res.status(204).send()
@@ -157,7 +157,7 @@ export class UserController {
         const token = jwt.sign(
             { user_id: user.id },
             process.env.JWT_PASS ?? '',
-            { expiresIn: '100y' }
+            { expiresIn: '30d' }
         );
 
         const { password: _, ...userLogin } = user

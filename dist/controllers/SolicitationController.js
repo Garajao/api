@@ -61,6 +61,8 @@ class SolicitationController {
         const solicitation = await solicitationRepository_1.solicitationRepository.findOneBy({ id: idSolicitation });
         if (!solicitation)
             throw new api_errors_1.NotFoundError('The solicitation does not exist');
+        if (solicitation.valid)
+            throw new api_errors_1.NotFoundError('A valid solicitation cannot be deleted');
         await solicitationRepository_1.solicitationRepository.delete(idSolicitation);
         return res.status(204).send();
     }

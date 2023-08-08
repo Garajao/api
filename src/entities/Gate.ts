@@ -34,6 +34,9 @@ export class Gate {
     @Column({ type: 'text' })
     uf: string
 
+    @Column({ type: 'text', nullable: true })
+    image: string
+
     @CreateDateColumn({ type: 'timestamptz' })
     created_at: Date
 

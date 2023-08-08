@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { gateRepository } from "../repositories/gateRepository";
-import { userRepository } from "../repositories/userRepository";
-import { BadRequestError, NotFoundError } from "../helpers/api-errors";
-import { solicitationRepository } from "../repositories/solicitationRepository";
-import { messageRepository } from "../repositories/messageRepository";
+import { Request, Response } from 'express';
+import { gateRepository } from '../repositories/gateRepository';
+import { userRepository } from '../repositories/userRepository';
+import { BadRequestError, NotFoundError } from '../helpers/api-errors';
+import { solicitationRepository } from '../repositories/solicitationRepository';
+import { Solicitation } from '../entities/Solicitation';
 
 export class GateController {
     async list(req: Request, res: Response) {
@@ -31,16 +31,17 @@ export class GateController {
         if (!user)
             throw new NotFoundError('The user does not exist')
 
-        const gates = await gateRepository.find({
-            where: { users: { id: idUser } },
-            order: { updated_at: 'DESC', }
-        })
+        const gates = await gateRepository.createQueryBuilder('gate')
+        .leftJoinAndMapOne('gate.solicitations', Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id')
+        .leftJoin('gate.users', 'users')
+        .where('users.id = :id', { id: idUser })
+        .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST').getMany()
 
         return res.json(gates);
     }
 
     async create(req: Request, res: Response) {
-        const { name, cep, address, complement, number, city, uf } = req.body
+        const { name, cep, address, complement, number, city, uf, image } = req.body
 
         if (!name)
             throw new BadRequestError('Name is required')
@@ -61,7 +62,7 @@ export class GateController {
             throw new BadRequestError('UF is required')
 
         const newGate = gateRepository.create({
-            name, cep, address, complement, number, city, uf
+            name, cep, address, complement, number, city, uf, image
         })
 
         await gateRepository.save(newGate)
@@ -69,7 +70,7 @@ export class GateController {
     }
 
     async update(req: Request, res: Response) {
-        const { name, open, provisional_open, cep, address, complement, number, city, uf } = req.body
+        const { name, open, provisional_open, cep, address, complement, number, city, uf, image } = req.body
         const { idGate } = req.params
 
         const gate = await gateRepository.findOneBy({ id: idGate })
@@ -78,7 +79,7 @@ export class GateController {
             throw new NotFoundError('The gate does not exist')
 
         await gateRepository.update(idGate, {
-            name, open, provisional_open, cep, address, complement, number, city, uf
+            name, open, provisional_open, cep, address, complement, number, city, uf, image
         });
 
         return res.status(204).send()

@@ -18,7 +18,7 @@ class UserController {
         return res.status(200).json(users);
     }
     async create(req, res) {
-        const { name, email, login, password, role_id } = req.body;
+        const { name, email, login, password, image, role_id } = req.body;
         if (!name)
             throw new api_errors_1.BadRequestError('Name is required');
         if (!email)
@@ -40,13 +40,13 @@ class UserController {
         if (!role)
             throw new api_errors_1.NotFoundError('The role does not exist');
         const newUser = userRepository_1.userRepository.create({
-            name, email, login, password: hashPassword, active: true, role
+            name, email, login, password: hashPassword, active: true, image, role
         });
         await userRepository_1.userRepository.save(newUser);
         return res.status(201).json({ id: newUser.id });
     }
     async update(req, res) {
-        const { name, email, active, role_id } = req.body;
+        const { name, email, active, image, role_id } = req.body;
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
         if (!user)
@@ -55,7 +55,7 @@ class UserController {
         if (!role)
             throw new api_errors_1.NotFoundError('The role does not exist');
         await userRepository_1.userRepository.update(idUser, {
-            name, email, active, role
+            name, email, active, image, role
         });
         return res.status(204).send();
     }
@@ -109,7 +109,7 @@ class UserController {
         if (!checkPassword) {
             throw new api_errors_1.BadRequestError('Incorrect username or password');
         }
-        const token = jsonwebtoken_1.default.sign({ user_id: user.id }, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '', { expiresIn: '100y' });
+        const token = jsonwebtoken_1.default.sign({ user_id: user.id }, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '', { expiresIn: '30d' });
         const { password: _, ...userLogin } = user;
         return res.status(200).json({
             user: userLogin,
