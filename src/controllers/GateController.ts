@@ -33,7 +33,7 @@ export class GateController {
 
         const gates = await gateRepository.createQueryBuilder('gate')
         .leftJoinAndMapOne('gate.solicitations', Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id')
-        .leftJoin('gate.users', 'users')
+        .leftJoinAndSelect('gate.users', 'users')
         .where('users.id = :id', { id: idUser })
         .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST').getMany()
 
