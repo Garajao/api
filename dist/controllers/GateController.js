@@ -16,6 +16,9 @@ class GateController {
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
         if (!gate)
             throw new api_errors_1.NotFoundError('The gate does not exist');
+        await gateRepository_1.gateRepository.update(idGate, {
+            consulted_at: new Date().toISOString()
+        });
         return res.json({ provisional_open: gate === null || gate === void 0 ? void 0 : gate.provisional_open });
     }
     async filterByUser(req, res) {

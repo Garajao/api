@@ -4,7 +4,6 @@ import { userRepository } from '../repositories/userRepository';
 import { BadRequestError, NotFoundError } from '../helpers/api-errors';
 import { solicitationRepository } from '../repositories/solicitationRepository';
 import { Solicitation } from '../entities/Solicitation';
-import { User } from '../entities/User';
 
 export class GateController {
     async list(req: Request, res: Response) {
@@ -20,6 +19,10 @@ export class GateController {
 
         if (!gate)
             throw new NotFoundError('The gate does not exist')
+
+        await gateRepository.update(idGate, {
+            consulted_at: new Date().toISOString()
+        });
 
         return res.json({ provisional_open: gate?.provisional_open });
     }

@@ -60,6 +60,10 @@ __decorate([
     __metadata("design:type", String)
 ], Gate.prototype, "image", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'timestamptz' }),
+    __metadata("design:type", Date)
+], Gate.prototype, "consulted_at", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamptz' }),
     __metadata("design:type", Date)
 ], Gate.prototype, "created_at", void 0);
