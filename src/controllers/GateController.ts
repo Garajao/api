@@ -36,12 +36,15 @@ export class GateController {
             throw new NotFoundError('The user does not exist')
 
         const gates = await gateRepository.createQueryBuilder('gate')
-        .leftJoinAndMapOne('gate.solicitations', Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id')
+        .leftJoinAndMapOne('gate.solicitations', Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id and solicitations.message IN (:...ids)', { ids: [1, 2] })
         .leftJoin('gate.users', 'user')
         .leftJoinAndSelect('gate.users', 'users')
         .leftJoinAndSelect('users.role', 'role')
+        .leftJoinAndSelect('solicitations.message', 'message')
         .where('user.id = :id', { id: idUser })
         .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST')
+        .addOrderBy('gate.consulted_at', 'DESC')
+        .addOrderBy('gate.name', 'ASC')
         .addOrderBy('role.level', 'ASC')
         .addOrderBy('users.name', 'ASC')
         .getMany()
@@ -123,7 +126,7 @@ export class GateController {
         solicitations.map(async (solicitation) => {
             await solicitationRepository.update(solicitation.id, { valid: true, message: status ? 1 : 2 });
         })
-        await gateRepository.update(idGate, { open: status });
+        await gateRepository.update(idGate, { open: status, provisional_open: status });
 
         return res.status(204).send()
     }
