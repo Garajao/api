@@ -6,10 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const userRepository_1 = require("../repositories/userRepository");
 const gateRepository_1 = require("../repositories/gateRepository");
+const roleRepository_1 = require("../repositories/roleRepository");
+const api_errors_1 = require("../helpers/api-errors");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const api_errors_1 = require("../helpers/api-errors");
-const roleRepository_1 = require("../repositories/roleRepository");
 class UserController {
     async list(req, res) {
         const users = await userRepository_1.userRepository.find({
@@ -34,7 +34,7 @@ class UserController {
             throw new api_errors_1.BadRequestError('User login already exists');
         const emailExists = await userRepository_1.userRepository.findOneBy({ email });
         if (emailExists)
-            throw new api_errors_1.BadRequestError('User email already existse');
+            throw new api_errors_1.BadRequestError('User email already exists');
         const hashPassword = await bcrypt_1.default.hash(password, 10);
         const role = await roleRepository_1.roleRepository.findOneBy({ id: role_id });
         if (!role)
@@ -91,29 +91,38 @@ class UserController {
         await userRepository_1.userRepository.save(userUpdate);
         return res.status(204).send();
     }
-    async login(req, res) {
+    async signIn(req, res) {
         var _a;
         const { login, password } = req.body;
         if (!login)
             throw new api_errors_1.BadRequestError('Login is required');
         if (!password)
             throw new api_errors_1.BadRequestError('Password is required');
-        const user = await userRepository_1.userRepository.findOne({ loadRelationIds: true, where: { login } });
-        if (!user) {
+        const user = await userRepository_1.userRepository.findOne({
+            relations: { devices: true },
+            where: { login }
+        });
+        if (!user)
             throw new api_errors_1.BadRequestError('Incorrect username or password');
-        }
-        if (!user.active) {
+        if (!user.active)
             throw new api_errors_1.ForbiddenError('Inactive user');
-        }
         const checkPassword = await bcrypt_1.default.compare(password, user.password);
-        if (!checkPassword) {
+        if (!checkPassword)
             throw new api_errors_1.BadRequestError('Incorrect username or password');
-        }
         const token = jsonwebtoken_1.default.sign({ user_id: user.id }, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '', { expiresIn: '30d' });
+        await userRepository_1.userRepository.update(user.id, {
+            last_login: new Date().toISOString()
+        });
         const { password: _, ...userLogin } = user;
         return res.status(200).json({
             user: userLogin,
             token
+        });
+    }
+    async signOut(req, res) {
+        // const { login, password } = req.body
+        return res.status(200).json({
+            message: 'Logout successfully'
         });
     }
 }

@@ -25,7 +25,8 @@ export class UserSeeder implements Seeder {
             password: await bcrypt.hash('admin', 10),
             active: true,
             role: role_admin,
-            gates: [gate_1, gate_2]
+            gates: [gate_1, gate_2],
+            image: 'https://this-person-does-not-exist.com/img/avatar-gen11b7ef0efb70d031fb600a566926a588.jpg'
         }, {
             id: '17ad518b-f1ef-4fdf-8e04-d84c0a48f97f',
             name: 'Generic user',
@@ -34,7 +35,8 @@ export class UserSeeder implements Seeder {
             password: await bcrypt.hash('12345', 10),
             active: true,
             role: role_user,
-            gates: [gate_1]
+            gates: [gate_1],
+            image: 'https://this-person-does-not-exist.com/img/avatar-genfbb23d2166924a2a758f3896d3416256.jpg'
         }]
 
         const newUsers = userRepository.create(usersData)

@@ -4,6 +4,10 @@ import { userRepository } from '../repositories/userRepository';
 import { BadRequestError, NotFoundError } from '../helpers/api-errors';
 import { solicitationRepository } from '../repositories/solicitationRepository';
 import { Solicitation } from '../entities/Solicitation';
+import { messageRepository } from '../repositories/messageRepository';
+import { In } from 'typeorm';
+import { PushNotificationController } from './push_notifications/PushNotificationController';
+import { Notification } from '../entities/Notification';
 
 export class GateController {
     async list(req: Request, res: Response) {
@@ -36,10 +40,12 @@ export class GateController {
             throw new NotFoundError('The user does not exist')
 
         const gates = await gateRepository.createQueryBuilder('gate')
+        .withDeleted() 
         .leftJoinAndMapOne('gate.solicitations', Solicitation, 'solicitations', 'solicitations.valid = true and solicitations.gate = gate.id and solicitations.message IN (:...ids)', { ids: [1, 2] })
         .leftJoin('gate.users', 'user')
         .leftJoinAndSelect('gate.users', 'users')
         .leftJoinAndSelect('users.role', 'role')
+        .leftJoinAndSelect('users.devices', 'devices')
         .leftJoinAndSelect('solicitations.message', 'message')
         .where('user.id = :id', { id: idUser })
         .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST')
@@ -114,17 +120,39 @@ export class GateController {
         const { status } = req.body
         const { idGate } = req.params
 
-        const gate = await gateRepository.findOneBy({ id: idGate })
+        const gate = await gateRepository.findOne({
+            relations: { users: { devices: true } },
+            where: { id: idGate }
+        })
 
         if (!gate)
             throw new NotFoundError('The gate does not exist')
 
         const solicitations = await solicitationRepository.find({
+            relations: { user: true },
             where: { gate: { id: idGate }, valid: false }
         })
 
         solicitations.map(async (solicitation) => {
             await solicitationRepository.update(solicitation.id, { valid: true, message: status ? 1 : 2 });
+
+            const messages = await messageRepository.findBy({ id: In([1, 2]) })
+            const notifications = [] as Notification[]
+
+            gate.users.map(async (user) => {
+                if(solicitation.user?.id != user.id) {
+                    user.devices.map(async (device) => {
+                        notifications.push({
+                            device: device, 
+                            title: gate.name, 
+                            body: `${status ? messages[0].description : messages[1].description} by ${solicitation.user?.name}`
+                        } as Notification)
+                    })
+                }
+            })
+
+            new PushNotificationController().send(notifications)
+
         })
         await gateRepository.update(idGate, { open: status, provisional_open: status });
 

@@ -34,7 +34,7 @@ class MessageController {
         const { idMessage } = req.params;
         const message = await messageRepository_1.messageRepository.findOneBy({ id: Number(idMessage) });
         if (!message)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('The message does not exist');
         await messageRepository_1.messageRepository.delete(idMessage);
         return res.status(204).send();
     }

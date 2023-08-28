@@ -2,6 +2,7 @@ import { Column, PrimaryGeneratedColumn, Entity, OneToOne, OneToMany, JoinColumn
 import { Gate } from './Gate';
 import { Solicitation } from './Solicitation';
 import { Role } from './Role';
+import { Device } from './Device';
 
 @Entity('users')
 export class User {
@@ -26,6 +27,9 @@ export class User {
     @Column({ type: 'text', nullable: true })
     image: string
 
+    @Column({ type: 'timestamptz', nullable: true })
+    last_login: Date
+
     @CreateDateColumn({ type: 'timestamptz' })
     created_at: Date
 
@@ -41,4 +45,7 @@ export class User {
     @ManyToOne(() => Role, role => role.users, { nullable: false })
     @JoinColumn({ name: 'role_id' })
     role: Role;
+
+    @OneToMany(() => Device, device => device.user)
+    devices: Device[]
 }

@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { userRepository } from '../repositories/userRepository';
 import { gateRepository } from '../repositories/gateRepository';
+import { roleRepository } from '../repositories/roleRepository';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../helpers/api-errors';
+
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { BadRequestError, ForbiddenError, NotFoundError } from '../helpers/api-errors';
-import { roleRepository } from '../repositories/roleRepository';
 
 export class UserController {
     async list(req: Request, res: Response) {
@@ -41,7 +42,7 @@ export class UserController {
         const emailExists = await userRepository.findOneBy({ email })
 
         if (emailExists)
-            throw new BadRequestError('User email already existse')
+            throw new BadRequestError('User email already exists')
 
         const hashPassword = await bcrypt.hash(password, 10);
 
@@ -129,7 +130,7 @@ export class UserController {
         return res.status(204).send()
     }
 
-    async login(req: Request, res: Response) {
+    async signIn(req: Request, res: Response) {
         const { login, password } = req.body
 
         if (!login)
@@ -138,33 +139,45 @@ export class UserController {
         if (!password)
             throw new BadRequestError('Password is required')
 
-        const user = await userRepository.findOne({ loadRelationIds: true, where: { login } })
+        const user = await userRepository.findOne({ 
+            relations: { devices: true},
+            where: { login } 
+        })
 
-        if (!user) {
+        if (!user) 
             throw new BadRequestError('Incorrect username or password');
-        }
 
-        if (!user.active) {
+        if (!user.active) 
             throw new ForbiddenError('Inactive user');
-        }
 
         const checkPassword = await bcrypt.compare(password, user.password);
 
-        if (!checkPassword) {
+        if (!checkPassword) 
             throw new BadRequestError('Incorrect username or password');
-        }
-
+        
         const token = jwt.sign(
             { user_id: user.id },
             process.env.JWT_PASS ?? '',
             { expiresIn: '30d' }
         );
+        
+        await userRepository.update(user.id, {
+            last_login: new Date().toISOString()
+        });
 
         const { password: _, ...userLogin } = user
 
         return res.status(200).json({
             user: userLogin,
             token
+        });
+    }
+
+    async signOut(req: Request, res: Response) {
+        // const { login, password } = req.body
+        
+        return res.status(200).json({
+            message: 'Logout successfully'
         });
     }
 }

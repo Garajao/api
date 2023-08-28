@@ -5,6 +5,9 @@ const solicitationRepository_1 = require("../repositories/solicitationRepository
 const userRepository_1 = require("../repositories/userRepository");
 const gateRepository_1 = require("../repositories/gateRepository");
 const api_errors_1 = require("../helpers/api-errors");
+const messageRepository_1 = require("../repositories/messageRepository");
+const typeorm_1 = require("typeorm");
+const PushNotificationController_1 = require("./push_notifications/PushNotificationController");
 class SolicitationController {
     async list(req, res) {
         const solicitations = await solicitationRepository_1.solicitationRepository.find({
@@ -20,7 +23,10 @@ class SolicitationController {
         let { status, message, code, valid, user_id } = req.body;
         const { idGate } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: user_id !== null && user_id !== void 0 ? user_id : "00000000-0000-0000-0000-000000000000" });
-        const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
+        const gate = await gateRepository_1.gateRepository.findOne({
+            relations: { users: { devices: true } },
+            where: { id: idGate }
+        });
         const solicitation = await solicitationRepository_1.solicitationRepository.findOne({
             relations: { gate: true },
             where: { gate: { id: idGate }, valid: false },
@@ -40,8 +46,21 @@ class SolicitationController {
                 throw new api_errors_1.BadRequestError('There is still a pending request for gate ' + gate.name);
             await gateRepository_1.gateRepository.update(idGate, { provisional_open: status });
         }
-        else
+        else {
             await gateRepository_1.gateRepository.update(idGate, { open: status, provisional_open: status });
+            const messages = await messageRepository_1.messageRepository.findBy({ id: (0, typeorm_1.In)([1, 2]) });
+            const notifications = [];
+            gate.users.map(async (user) => {
+                user.devices.map(async (device) => {
+                    notifications.push({
+                        device: device,
+                        title: gate.name,
+                        body: `${status ? messages[0].description : messages[1].description} by control`
+                    });
+                });
+            });
+            new PushNotificationController_1.PushNotificationController().send(notifications);
+        }
         await solicitationRepository_1.solicitationRepository.save(newSolicitation);
         return res.status(201).json({ id: newSolicitation.id });
     }

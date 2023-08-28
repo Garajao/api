@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const Gate_1 = require("./Gate");
 const Solicitation_1 = require("./Solicitation");
 const Role_1 = require("./Role");
+const Device_1 = require("./Device");
 let User = exports.User = class User {
 };
 __decorate([
@@ -45,6 +46,10 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "image", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'timestamptz', nullable: true }),
+    __metadata("design:type", Date)
+], User.prototype, "last_login", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamptz' }),
     __metadata("design:type", Date)
 ], User.prototype, "created_at", void 0);
@@ -65,6 +70,10 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'role_id' }),
     __metadata("design:type", Role_1.Role)
 ], User.prototype, "role", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Device_1.Device, device => device.user),
+    __metadata("design:type", Array)
+], User.prototype, "devices", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users')
 ], User);

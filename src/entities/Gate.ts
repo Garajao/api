@@ -37,7 +37,7 @@ export class Gate {
     @Column({ type: 'text', nullable: true })
     image: string
 
-    @Column({ type: 'timestamptz' })
+    @Column({ type: 'timestamptz', nullable: true })
     consulted_at: Date
 
     @CreateDateColumn({ type: 'timestamptz' })

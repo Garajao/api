@@ -25,7 +25,6 @@ export class MessageController {
     }
 
     async update(req: Request, res: Response) {
-
         const { description } = req.body
         const { idMessage } = req.params
 
@@ -47,7 +46,7 @@ export class MessageController {
         const message = await messageRepository.findOneBy({ id: Number(idMessage) })
 
         if (!message)
-            throw new NotFoundError('The role does not exist')
+            throw new NotFoundError('The message does not exist')
 
         await messageRepository.delete(idMessage);
 
