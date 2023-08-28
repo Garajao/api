@@ -72,21 +72,21 @@ __decorate([
     __metadata("design:type", Date)
 ], Gate.prototype, "updated_at", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Solicitation_1.Solicitation, solicitation => solicitation.gate),
+    (0, typeorm_1.OneToMany)(() => Solicitation_1.Solicitation, (solicitation) => solicitation.gate),
     __metadata("design:type", Array)
 ], Gate.prototype, "solicitations", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => User_1.User, user => user.gates),
+    (0, typeorm_1.ManyToMany)(() => User_1.User, (user) => user.gates),
     (0, typeorm_1.JoinTable)({
         name: 'user_gate',
         joinColumn: {
             name: 'gate_id',
-            referencedColumnName: 'id'
+            referencedColumnName: 'id',
         },
         inverseJoinColumn: {
             name: 'user_id',
-            referencedColumnName: 'id'
-        }
+            referencedColumnName: 'id',
+        },
     }),
     __metadata("design:type", Array)
 ], Gate.prototype, "users", void 0);

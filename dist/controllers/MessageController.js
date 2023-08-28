@@ -13,7 +13,7 @@ class MessageController {
         if (!description)
             throw new api_errors_1.BadRequestError('Description is required');
         const newMessage = messageRepository_1.messageRepository.create({
-            description
+            description,
         });
         await messageRepository_1.messageRepository.save(newMessage);
         // return res.status(201).json({ id: newMessage.id })
@@ -26,7 +26,7 @@ class MessageController {
         if (!message)
             throw new api_errors_1.NotFoundError('The message does not exist');
         await messageRepository_1.messageRepository.update(idMessage, {
-            description
+            description,
         });
         return res.status(204).send();
     }

@@ -1,55 +1,53 @@
-import { Request, Response } from "express";
-import { BadRequestError, NotFoundError } from "../helpers/api-errors";
-import { messageRepository } from "../repositories/messageRepository";
+import { Request, Response } from 'express'
+
+import { BadRequestError, NotFoundError } from '../helpers/api-errors'
+import { messageRepository } from '../repositories/messageRepository'
 
 export class MessageController {
-    async list(req: Request, res: Response) {
-        const messages = await messageRepository.find()
+  async list(req: Request, res: Response) {
+    const messages = await messageRepository.find()
 
-        return res.json(messages);
-    }
+    return res.json(messages)
+  }
 
-    async create(req: Request, res: Response) {
-        const { description } = req.body
+  async create(req: Request, res: Response) {
+    const { description } = req.body
 
-        if (!description)
-            throw new BadRequestError('Description is required')
+    if (!description) throw new BadRequestError('Description is required')
 
-        const newMessage = messageRepository.create({
-            description
-        })
+    const newMessage = messageRepository.create({
+      description,
+    })
 
-        await messageRepository.save(newMessage)
-        // return res.status(201).json({ id: newMessage.id })
-        return res.status(201).json(newMessage)
-    }
+    await messageRepository.save(newMessage)
+    // return res.status(201).json({ id: newMessage.id })
+    return res.status(201).json(newMessage)
+  }
 
-    async update(req: Request, res: Response) {
-        const { description } = req.body
-        const { idMessage } = req.params
+  async update(req: Request, res: Response) {
+    const { description } = req.body
+    const { idMessage } = req.params
 
-        const message = await messageRepository.findOneBy({ id: Number(idMessage) })
+    const message = await messageRepository.findOneBy({ id: Number(idMessage) })
 
-        if (!message)
-            throw new NotFoundError('The message does not exist')
+    if (!message) throw new NotFoundError('The message does not exist')
 
-        await messageRepository.update(idMessage, {
-            description
-        });
+    await messageRepository.update(idMessage, {
+      description,
+    })
 
-        return res.status(204).send()
-    }
+    return res.status(204).send()
+  }
 
-    async delete(req: Request, res: Response) {
-        const { idMessage } = req.params
+  async delete(req: Request, res: Response) {
+    const { idMessage } = req.params
 
-        const message = await messageRepository.findOneBy({ id: Number(idMessage) })
+    const message = await messageRepository.findOneBy({ id: Number(idMessage) })
 
-        if (!message)
-            throw new NotFoundError('The message does not exist')
+    if (!message) throw new NotFoundError('The message does not exist')
 
-        await messageRepository.delete(idMessage);
+    await messageRepository.delete(idMessage)
 
-        return res.status(204).send()
-    }
+    return res.status(204).send()
+  }
 }

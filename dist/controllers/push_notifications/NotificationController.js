@@ -8,7 +8,7 @@ class NotificationController {
     async list(req, res) {
         const notifications = await notificationRepository_1.notificationRepository.find({
             relations: { device: { user: true } },
-            withDeleted: true
+            withDeleted: true,
         });
         return res.json(notifications);
     }
@@ -22,7 +22,9 @@ class NotificationController {
         if (!device)
             throw new api_errors_1.BadRequestError('The device does not exist');
         const newNotification = notificationRepository_1.notificationRepository.create({
-            title, body, device
+            title,
+            body,
+            device,
         });
         await notificationRepository_1.notificationRepository.save(newNotification);
         return res.status(201).json(newNotification.id);
@@ -30,20 +32,29 @@ class NotificationController {
     async update(req, res) {
         const { title, body, device_id, expo_id, expo_status, expo_message } = req.body;
         const { idNotification } = req.params;
-        const notification = await notificationRepository_1.notificationRepository.findOneBy({ id: idNotification });
+        const notification = await notificationRepository_1.notificationRepository.findOneBy({
+            id: idNotification,
+        });
         if (!notification)
             throw new api_errors_1.NotFoundError('The notification does not exist');
         const device = await deviceRepository_1.deviceRepository.findOneBy({ id: device_id });
         if (!device)
             throw new api_errors_1.BadRequestError('The device does not exist');
         await notificationRepository_1.notificationRepository.update(idNotification, {
-            title, body, device, expo_id, expo_status, expo_message
+            title,
+            body,
+            device,
+            expo_id,
+            expo_status,
+            expo_message,
         });
         return res.status(204).send();
     }
     async delete(req, res) {
         const { idNotification } = req.params;
-        const notification = await notificationRepository_1.notificationRepository.findOneBy({ id: idNotification });
+        const notification = await notificationRepository_1.notificationRepository.findOneBy({
+            id: idNotification,
+        });
         if (!notification)
             throw new api_errors_1.NotFoundError('The notification does not exist');
         await notificationRepository_1.notificationRepository.delete(idNotification);

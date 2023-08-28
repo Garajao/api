@@ -10,7 +10,9 @@ class PushNotificationController {
     async send(notifications) {
         const notificationsWithId = await Promise.all(notifications.map(async (notification) => {
             const newNotification = notificationRepository_1.notificationRepository.create({
-                title: notification.title, body: notification.body, device: notification.device
+                title: notification.title,
+                body: notification.body,
+                device: notification.device,
             });
             const createdNotification = await notificationRepository_1.notificationRepository.save(newNotification);
             return { ...notification, id: createdNotification.id };
@@ -28,7 +30,7 @@ class PushNotificationController {
                 await notificationRepository_1.notificationRepository.update(notificationsWithId[key].id, {
                     expo_id: expo.id,
                     expo_status: expo.status,
-                    expo_message: expo.message
+                    expo_message: expo.message,
                 });
             });
         }

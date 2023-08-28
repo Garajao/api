@@ -39,6 +39,7 @@ yarn dev
 - [Typescript](https://www.typescriptlang.org/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [TypeORM](https://typeorm.io/)
+- [Expo server SDK](https://github.com/expo/expo-server-sdk-node)
 
 ## ⚙️ API documentation
 

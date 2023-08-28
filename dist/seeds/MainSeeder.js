@@ -7,7 +7,7 @@ const GateSeeder_1 = require("./GateSeeder");
 const RoleSeeder_1 = require("./RoleSeeder");
 const MessageSeeder_1 = require("./MessageSeeder");
 class MainSeeder {
-    async run(dataSource, factoryManager) {
+    async run(dataSource) {
         await (0, typeorm_extension_1.runSeeder)(dataSource, RoleSeeder_1.RoleSeeder);
         await (0, typeorm_extension_1.runSeeder)(dataSource, MessageSeeder_1.MessageSeeder);
         await (0, typeorm_extension_1.runSeeder)(dataSource, GateSeeder_1.GateSeeder);

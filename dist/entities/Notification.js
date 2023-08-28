@@ -47,7 +47,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Notification.prototype, "updated_at", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => Device_1.Device, device => device.notifications),
+    (0, typeorm_1.ManyToOne)(() => Device_1.Device, (device) => device.notifications),
     (0, typeorm_1.JoinColumn)({ name: 'device_id' }),
     __metadata("design:type", Device_1.Device)
 ], Notification.prototype, "device", void 0);

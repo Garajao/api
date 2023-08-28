@@ -48,12 +48,12 @@ __decorate([
     __metadata("design:type", Date)
 ], Device.prototype, "deleted_at", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => User_1.User, user => user.solicitations),
+    (0, typeorm_1.ManyToOne)(() => User_1.User, (user) => user.solicitations),
     (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
     __metadata("design:type", User_1.User)
 ], Device.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Notification_1.Notification, notification => notification.device),
+    (0, typeorm_1.OneToMany)(() => Notification_1.Notification, (notification) => notification.device),
     __metadata("design:type", Array)
 ], Device.prototype, "notifications", void 0);
 exports.Device = Device = __decorate([

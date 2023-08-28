@@ -35,7 +35,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Role.prototype, "updated_at", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => User_1.User, user => user.role),
+    (0, typeorm_1.OneToMany)(() => User_1.User, (user) => user.role),
     __metadata("design:type", Array)
 ], Role.prototype, "users", void 0);
 exports.Role = Role = __decorate([

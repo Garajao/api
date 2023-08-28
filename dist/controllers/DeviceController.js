@@ -5,8 +5,10 @@ const api_errors_1 = require("../helpers/api-errors");
 const deviceRepository_1 = require("../repositories/deviceRepository");
 class DeviceController {
     async list(req, res) {
-        const devices = await deviceRepository_1.deviceRepository.find({ relations: { user: true, notifications: true } });
-        return res.json(devices);
+        const devices = await deviceRepository_1.deviceRepository.find({
+            relations: { user: true, notifications: true },
+        });
+        return res.status(200).json(devices);
     }
     async filterByPushToken(req, res) {
         const { pushToken } = req.params;
@@ -15,9 +17,11 @@ class DeviceController {
         const devices = await deviceRepository_1.deviceRepository.find({
             relations: { user: true },
             where: { push_token: pushToken },
-            withDeleted: true
+            withDeleted: true,
         });
-        return res.status(201).json(devices);
+        if (devices.length === 0)
+            throw new api_errors_1.NotFoundError('The device does not exist');
+        return res.status(200).json(devices);
     }
     async create(req, res) {
         const { os, model, name, push_token, user } = req.body;
@@ -30,7 +34,11 @@ class DeviceController {
         if (!user)
             throw new api_errors_1.BadRequestError('User is required');
         const newDevice = deviceRepository_1.deviceRepository.create({
-            os, model, name, push_token, user
+            os,
+            model,
+            name,
+            push_token,
+            user,
         });
         await deviceRepository_1.deviceRepository.save(newDevice);
         return res.status(201).json(newDevice);
@@ -42,7 +50,11 @@ class DeviceController {
         if (!device)
             throw new api_errors_1.NotFoundError('The device does not exist');
         await deviceRepository_1.deviceRepository.update(idDevice, {
-            os, model, name, push_token, user
+            os,
+            model,
+            name,
+            push_token,
+            user,
         });
         return res.status(204).send();
     }
@@ -54,7 +66,7 @@ class DeviceController {
         await deviceRepository_1.deviceRepository
             .createQueryBuilder()
             .softDelete()
-            .where("id = :id", { id: idDevice })
+            .where('id = :id', { id: idDevice })
             .execute();
         return res.status(204).send();
     }
@@ -62,15 +74,16 @@ class DeviceController {
         const { idDevice } = req.params;
         if (!idDevice)
             throw new api_errors_1.BadRequestError('Device is required');
-        const device = await deviceRepository_1.deviceRepository.findOne({ where: { id: idDevice },
-            withDeleted: true
+        const device = await deviceRepository_1.deviceRepository.findOne({
+            where: { id: idDevice },
+            withDeleted: true,
         });
         if (!device)
             throw new api_errors_1.NotFoundError('The device does not exist');
         await deviceRepository_1.deviceRepository
             .createQueryBuilder()
             .restore()
-            .where("id = :id", { id: idDevice })
+            .where('id = :id', { id: idDevice })
             .execute();
         return res.status(204).send();
     }

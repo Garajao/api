@@ -1,4 +1,5 @@
 import { Router } from 'express'
+
 import { UserController } from './controllers/UserController'
 import { GateController } from './controllers/GateController'
 import { SolicitationController } from './controllers/SolicitationController'
@@ -28,13 +29,22 @@ routes.get('/gates/:idUser/user', new GateController().filterByUser)
 routes.post('/gates', new GateController().create)
 routes.patch('/gates/:idGate', new GateController().update)
 routes.delete('/gates/:idGate', new GateController().delete)
-routes.patch('/gates/:idGate/solicitations/valid', new GateController().validSolicitations)
+routes.patch(
+  '/gates/:idGate/solicitations/valid',
+  new GateController().validSolicitations,
+)
 routes.get('/gates/:idGate/solicitations', new GateController().paging)
 
 routes.get('/solicitations', new SolicitationController().list)
 routes.post('/solicitations/:idGate/gate', new SolicitationController().create)
-routes.patch('/solicitations/:idSolicitation', new SolicitationController().update)
-routes.delete('/solicitations/:idSolicitation', new SolicitationController().delete)
+routes.patch(
+  '/solicitations/:idSolicitation',
+  new SolicitationController().update,
+)
+routes.delete(
+  '/solicitations/:idSolicitation',
+  new SolicitationController().delete,
+)
 
 routes.get('/roles', new RoleController().list)
 routes.post('/roles', new RoleController().create)
@@ -47,7 +57,10 @@ routes.patch('/messages/:idMessage', new MessageController().update)
 routes.delete('/messages/:idMessage', new MessageController().delete)
 
 routes.get('/devices', new DeviceController().list)
-routes.get('/devices/pushToken/:pushToken', new DeviceController().filterByPushToken)
+routes.get(
+  '/devices/pushToken/:pushToken',
+  new DeviceController().filterByPushToken,
+)
 routes.post('/devices', new DeviceController().create)
 routes.patch('/devices/:idDevice', new DeviceController().update)
 routes.delete('/devices/:idDevice', new DeviceController().delete)
@@ -55,7 +68,13 @@ routes.patch('/devices/:idDevice/restore', new DeviceController().restore)
 
 routes.get('/notifications', new NotificationController().list)
 routes.post('/notifications', new NotificationController().create)
-routes.patch('/notifications/:idNotification', new NotificationController().update)
-routes.delete('/notifications/:idNotification', new NotificationController().delete)
+routes.patch(
+  '/notifications/:idNotification',
+  new NotificationController().update,
+)
+routes.delete(
+  '/notifications/:idNotification',
+  new NotificationController().delete,
+)
 
 export default routes
