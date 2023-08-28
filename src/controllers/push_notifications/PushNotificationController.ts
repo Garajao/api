@@ -27,6 +27,7 @@ export class PushNotificationController {
             to: notification.device.push_token,
             title: notification.title,
             body: notification.body,
+            priority: 'high',
           } as ExpoPushMessage
         }),
       )

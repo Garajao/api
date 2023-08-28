@@ -13,26 +13,26 @@ class DeviceController {
     async filterByPushToken(req, res) {
         const { pushToken } = req.params;
         if (!pushToken)
-            throw new api_errors_1.BadRequestError('Push token is required');
+            throw new api_errors_1.BadRequestError('O token de notificação é obrigatório');
         const devices = await deviceRepository_1.deviceRepository.find({
             relations: { user: true },
             where: { push_token: pushToken },
             withDeleted: true,
         });
         if (devices.length === 0)
-            throw new api_errors_1.NotFoundError('The device does not exist');
+            throw new api_errors_1.NotFoundError('O aparelho não existe');
         return res.status(200).json(devices);
     }
     async create(req, res) {
         const { os, model, name, push_token, user } = req.body;
         if (!os)
-            throw new api_errors_1.BadRequestError('OS is required');
+            throw new api_errors_1.BadRequestError('O sistema operacional é obrigatório');
         if (!model)
-            throw new api_errors_1.BadRequestError('Model is required');
+            throw new api_errors_1.BadRequestError('O modelo é obrigatório');
         if (!push_token)
-            throw new api_errors_1.BadRequestError('Push token is required');
+            throw new api_errors_1.BadRequestError('O token de notificação é obrigatório');
         if (!user)
-            throw new api_errors_1.BadRequestError('User is required');
+            throw new api_errors_1.BadRequestError('O usuário é obrigatório');
         const newDevice = deviceRepository_1.deviceRepository.create({
             os,
             model,
@@ -48,7 +48,7 @@ class DeviceController {
         const { idDevice } = req.params;
         const device = await deviceRepository_1.deviceRepository.findOneBy({ id: idDevice });
         if (!device)
-            throw new api_errors_1.NotFoundError('The device does not exist');
+            throw new api_errors_1.NotFoundError('O aparelho não existe');
         await deviceRepository_1.deviceRepository.update(idDevice, {
             os,
             model,
@@ -62,7 +62,7 @@ class DeviceController {
         const { idDevice } = req.params;
         const device = await deviceRepository_1.deviceRepository.findOneBy({ id: idDevice });
         if (!device)
-            throw new api_errors_1.NotFoundError('The device does not exist');
+            throw new api_errors_1.NotFoundError('O aparelho não existe');
         await deviceRepository_1.deviceRepository
             .createQueryBuilder()
             .softDelete()
@@ -73,13 +73,13 @@ class DeviceController {
     async restore(req, res) {
         const { idDevice } = req.params;
         if (!idDevice)
-            throw new api_errors_1.BadRequestError('Device is required');
+            throw new api_errors_1.BadRequestError('O aparelho é obrigatório');
         const device = await deviceRepository_1.deviceRepository.findOne({
             where: { id: idDevice },
             withDeleted: true,
         });
         if (!device)
-            throw new api_errors_1.NotFoundError('The device does not exist');
+            throw new api_errors_1.NotFoundError('O aparelho não existe');
         await deviceRepository_1.deviceRepository
             .createQueryBuilder()
             .restore()

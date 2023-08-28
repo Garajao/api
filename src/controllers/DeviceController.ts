@@ -15,7 +15,8 @@ export class DeviceController {
   async filterByPushToken(req: Request, res: Response) {
     const { pushToken } = req.params
 
-    if (!pushToken) throw new BadRequestError('Push token is required')
+    if (!pushToken)
+      throw new BadRequestError('O token de notificação é obrigatório')
 
     const devices = await deviceRepository.find({
       relations: { user: true },
@@ -23,8 +24,7 @@ export class DeviceController {
       withDeleted: true,
     })
 
-    if (devices.length === 0)
-      throw new NotFoundError('The device does not exist')
+    if (devices.length === 0) throw new NotFoundError('O aparelho não existe')
 
     return res.status(200).json(devices)
   }
@@ -32,13 +32,14 @@ export class DeviceController {
   async create(req: Request, res: Response) {
     const { os, model, name, push_token, user } = req.body
 
-    if (!os) throw new BadRequestError('OS is required')
+    if (!os) throw new BadRequestError('O sistema operacional é obrigatório')
 
-    if (!model) throw new BadRequestError('Model is required')
+    if (!model) throw new BadRequestError('O modelo é obrigatório')
 
-    if (!push_token) throw new BadRequestError('Push token is required')
+    if (!push_token)
+      throw new BadRequestError('O token de notificação é obrigatório')
 
-    if (!user) throw new BadRequestError('User is required')
+    if (!user) throw new BadRequestError('O usuário é obrigatório')
 
     const newDevice = deviceRepository.create({
       os,
@@ -58,7 +59,7 @@ export class DeviceController {
 
     const device = await deviceRepository.findOneBy({ id: idDevice })
 
-    if (!device) throw new NotFoundError('The device does not exist')
+    if (!device) throw new NotFoundError('O aparelho não existe')
 
     await deviceRepository.update(idDevice, {
       os,
@@ -76,7 +77,7 @@ export class DeviceController {
 
     const device = await deviceRepository.findOneBy({ id: idDevice })
 
-    if (!device) throw new NotFoundError('The device does not exist')
+    if (!device) throw new NotFoundError('O aparelho não existe')
 
     await deviceRepository
       .createQueryBuilder()
@@ -90,14 +91,14 @@ export class DeviceController {
   async restore(req: Request, res: Response) {
     const { idDevice } = req.params
 
-    if (!idDevice) throw new BadRequestError('Device is required')
+    if (!idDevice) throw new BadRequestError('O aparelho é obrigatório')
 
     const device = await deviceRepository.findOne({
       where: { id: idDevice },
       withDeleted: true,
     })
 
-    if (!device) throw new NotFoundError('The device does not exist')
+    if (!device) throw new NotFoundError('O aparelho não existe')
 
     await deviceRepository
       .createQueryBuilder()

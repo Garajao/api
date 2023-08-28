@@ -15,7 +15,7 @@ export const authMiddleware = async (
 ) => {
   const { authorization } = req.headers
 
-  if (!authorization) throw new UnauthorizedError('Unauthorized')
+  if (!authorization) throw new UnauthorizedError('Sem autorização')
 
   const token = authorization.split(' ')[1]
 
@@ -26,7 +26,7 @@ export const authMiddleware = async (
 
   const user = await userRepository.findOneBy({ id: user_id })
 
-  if (!user) throw new UnauthorizedError('Unauthorized')
+  if (!user) throw new UnauthorizedError('Sem autorização')
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password: _, ...loggedUser } = user

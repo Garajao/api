@@ -20,25 +20,25 @@ class UserController {
     async create(req, res) {
         const { name, email, login, password, image, role_id } = req.body;
         if (!name)
-            throw new api_errors_1.BadRequestError('Name is required');
+            throw new api_errors_1.BadRequestError('O nome é obrigatório');
         if (!email)
-            throw new api_errors_1.BadRequestError('Email is required');
+            throw new api_errors_1.BadRequestError('O email é obrigatório');
         if (!login)
-            throw new api_errors_1.BadRequestError('Login is required');
+            throw new api_errors_1.BadRequestError('O login é obrigatório');
         if (!password)
-            throw new api_errors_1.BadRequestError('Password is required');
+            throw new api_errors_1.BadRequestError('A senha é obrigatória');
         if (!role_id)
-            throw new api_errors_1.BadRequestError('Role is required');
+            throw new api_errors_1.BadRequestError('O papel é obrigatório');
         const loginExists = await userRepository_1.userRepository.findOneBy({ login });
         if (loginExists)
-            throw new api_errors_1.BadRequestError('User login already exists');
+            throw new api_errors_1.BadRequestError('O login já existe');
         const emailExists = await userRepository_1.userRepository.findOneBy({ email });
         if (emailExists)
-            throw new api_errors_1.BadRequestError('User email already exists');
+            throw new api_errors_1.BadRequestError('O email já existe');
         const hashPassword = await bcrypt_1.default.hash(password, 10);
         const role = await roleRepository_1.roleRepository.findOneBy({ id: role_id });
         if (!role)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('O papel não existe');
         const newUser = userRepository_1.userRepository.create({
             name,
             email,
@@ -56,10 +56,10 @@ class UserController {
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
         if (!user)
-            throw new api_errors_1.NotFoundError('The user does not exist');
+            throw new api_errors_1.NotFoundError('O usuário não existe');
         const role = await roleRepository_1.roleRepository.findOneBy({ id: role_id });
         if (!role)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('O papel não existe');
         await userRepository_1.userRepository.update(idUser, {
             name,
             email,
@@ -73,7 +73,7 @@ class UserController {
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
         if (!user)
-            throw new api_errors_1.NotFoundError('The user does not exist');
+            throw new api_errors_1.NotFoundError('O usuário não existe');
         await userRepository_1.userRepository.delete(idUser);
         return res.status(204).send();
     }
@@ -88,15 +88,15 @@ class UserController {
             where: { id: idUser },
         });
         if (!user)
-            throw new api_errors_1.NotFoundError('The user does not exist');
+            throw new api_errors_1.NotFoundError('O usuário não existe');
         if (!gate_id)
-            throw new api_errors_1.BadRequestError('Gate is required');
+            throw new api_errors_1.BadRequestError('O portão é obrigatório');
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: gate_id });
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
+            throw new api_errors_1.NotFoundError('O portão não existe');
         const checkRelations = user.gates.find((user_gate) => user_gate.id === gate.id);
         if (checkRelations)
-            throw new api_errors_1.BadRequestError('The gate has already been linked to the user');
+            throw new api_errors_1.BadRequestError('O portão já está relacionado ao usuário');
         const userUpdate = {
             ...user,
             gates: [...user.gates, gate],
@@ -108,20 +108,20 @@ class UserController {
         var _a;
         const { login, password } = req.body;
         if (!login)
-            throw new api_errors_1.BadRequestError('Login is required');
+            throw new api_errors_1.BadRequestError('O login é obrigatório');
         if (!password)
-            throw new api_errors_1.BadRequestError('Password is required');
+            throw new api_errors_1.BadRequestError('A senha é obrigatória');
         const user = await userRepository_1.userRepository.findOne({
             relations: { devices: true },
             where: { login },
         });
         if (!user)
-            throw new api_errors_1.BadRequestError('Incorrect username or password');
+            throw new api_errors_1.BadRequestError('Usuário ou senha incorretos');
         if (!user.active)
-            throw new api_errors_1.ForbiddenError('Inactive user');
+            throw new api_errors_1.ForbiddenError('Usuário inativo');
         const checkPassword = await bcrypt_1.default.compare(password, user.password);
         if (!checkPassword)
-            throw new api_errors_1.BadRequestError('Incorrect username or password');
+            throw new api_errors_1.BadRequestError('Usuário ou senha incorretos');
         const token = jsonwebtoken_1.default.sign({ user_id: user.id }, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '', {
             expiresIn: '30d',
         });
@@ -138,7 +138,7 @@ class UserController {
     async signOut(req, res) {
         // const { login, password } = req.body
         return res.status(200).json({
-            message: 'Logout successfully',
+            message: 'Logout realizado com sucesso',
         });
     }
 }

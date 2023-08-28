@@ -18,7 +18,7 @@ class GateController {
         const { idGate } = req.params;
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
+            throw new api_errors_1.NotFoundError('O portão não existe');
         await gateRepository_1.gateRepository.update(idGate, {
             consulted_at: new Date().toISOString(),
         });
@@ -28,7 +28,7 @@ class GateController {
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
         if (!user)
-            throw new api_errors_1.NotFoundError('The user does not exist');
+            throw new api_errors_1.NotFoundError('O usuário não existe');
         const gates = await gateRepository_1.gateRepository
             .createQueryBuilder('gate')
             .withDeleted()
@@ -50,17 +50,17 @@ class GateController {
     async create(req, res) {
         const { name, cep, address, complement, number, city, uf, image } = req.body;
         if (!name)
-            throw new api_errors_1.BadRequestError('Name is required');
+            throw new api_errors_1.BadRequestError('O nome é obrigatório');
         if (!cep)
-            throw new api_errors_1.BadRequestError('CEP is required');
+            throw new api_errors_1.BadRequestError('O CEP é obrigatório');
         if (!address)
-            throw new api_errors_1.BadRequestError('Address is required');
+            throw new api_errors_1.BadRequestError('O endereço é obrigatório');
         if (!number)
-            throw new api_errors_1.BadRequestError('Number is required');
+            throw new api_errors_1.BadRequestError('O número é obrigatório');
         if (!city)
-            throw new api_errors_1.BadRequestError('City is required');
+            throw new api_errors_1.BadRequestError('A cidade é obrigatória');
         if (!uf)
-            throw new api_errors_1.BadRequestError('UF is required');
+            throw new api_errors_1.BadRequestError('O UF é obrigatório');
         const newGate = gateRepository_1.gateRepository.create({
             name,
             cep,
@@ -79,7 +79,7 @@ class GateController {
         const { idGate } = req.params;
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
+            throw new api_errors_1.NotFoundError('O portão não existe');
         await gateRepository_1.gateRepository.update(idGate, {
             name,
             open,
@@ -98,7 +98,7 @@ class GateController {
         const { idGate } = req.params;
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
+            throw new api_errors_1.NotFoundError('O portão não existe');
         await gateRepository_1.gateRepository.delete(idGate);
         return res.status(204).send();
     }
@@ -110,7 +110,7 @@ class GateController {
             where: { id: idGate },
         });
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
+            throw new api_errors_1.NotFoundError('O portão não existe');
         const solicitations = await solicitationRepository_1.solicitationRepository.find({
             relations: { user: true },
             where: { gate: { id: idGate }, valid: false },
@@ -130,7 +130,7 @@ class GateController {
                         notifications.push({
                             device,
                             title: gate.name,
-                            body: `${status ? messages[0].description : messages[1].description} by ${(_a = solicitation.user) === null || _a === void 0 ? void 0 : _a.name}`,
+                            body: `${status ? messages[0].description : messages[1].description} por ${(_a = solicitation.user) === null || _a === void 0 ? void 0 : _a.name}`,
                         });
                     });
                 }
@@ -148,7 +148,7 @@ class GateController {
         const { offset, limit } = req.query;
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
+            throw new api_errors_1.NotFoundError('O portão não existe');
         const solicitations = await solicitationRepository_1.solicitationRepository.find({
             relations: { user: true, gate: true, message: true },
             where: { gate: { id: idGate } },

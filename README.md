@@ -10,7 +10,7 @@
 </p>
 
 
-## 📥 Installation and execution
+## 📦 Installation and execution
 ```bash
 # Cloning the repository and accessing the directory
 git clone git@github.com:GaraJao/api.git && cd api
@@ -86,4 +86,4 @@ Update role | `PATCH` | /api/roles/`:idRole`
 Delete role | `DELETE` | /api/roles/`:idRole`
 
 ## 📄 License
-MIT © Matheus Bonadio
+MIT © GaraJão

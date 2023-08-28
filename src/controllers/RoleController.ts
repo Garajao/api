@@ -17,9 +17,9 @@ export class RoleController {
   async create(req: Request, res: Response) {
     const { name, level } = req.body
 
-    if (!name) throw new BadRequestError('Name is required')
+    if (!name) throw new BadRequestError('O nome é obrigatório')
 
-    if (!level) throw new BadRequestError('Level is required')
+    if (!level) throw new BadRequestError('O nível é obrigatório')
 
     const newRole = roleRepository.create({
       name,
@@ -37,7 +37,7 @@ export class RoleController {
 
     const role = await roleRepository.findOneBy({ id: idRole })
 
-    if (!role) throw new NotFoundError('The role does not exist')
+    if (!role) throw new NotFoundError('O papel não existe')
 
     await roleRepository.update(idRole, {
       name,
@@ -52,7 +52,7 @@ export class RoleController {
 
     const role = await roleRepository.findOneBy({ id: idRole })
 
-    if (!role) throw new NotFoundError('The role does not exist')
+    if (!role) throw new NotFoundError('O papel não existe')
 
     await roleRepository.delete(idRole)
 

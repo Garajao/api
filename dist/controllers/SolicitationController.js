@@ -34,9 +34,9 @@ class SolicitationController {
             where: { gate: { id: idGate }, valid: false },
         });
         if (!message)
-            throw new api_errors_1.BadRequestError('Message is required');
+            throw new api_errors_1.BadRequestError('A mensagem é obrigatória');
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
+            throw new api_errors_1.NotFoundError('O portão não existe');
         if (!code) {
             status = !gate.open;
         }
@@ -50,7 +50,7 @@ class SolicitationController {
         });
         if (!valid) {
             if (solicitation)
-                throw new api_errors_1.BadRequestError('There is still a pending request for gate ' + gate.name);
+                throw new api_errors_1.BadRequestError(`Ainda existe uma solicitação pendente para o portão ${gate.name}`);
             await gateRepository_1.gateRepository.update(idGate, { provisional_open: status });
         }
         else {
@@ -65,7 +65,7 @@ class SolicitationController {
                     notifications.push({
                         device,
                         title: gate.name,
-                        body: `${status ? messages[0].description : messages[1].description} by control`,
+                        body: `${status ? messages[0].description : messages[1].description} pelo controle`,
                     });
                 });
             });
@@ -81,7 +81,7 @@ class SolicitationController {
             id: idSolicitation,
         });
         if (!solicitation)
-            throw new api_errors_1.NotFoundError('The solicitation does not exist');
+            throw new api_errors_1.NotFoundError('A solicitação não existe');
         await solicitationRepository_1.solicitationRepository.update(idSolicitation, {
             status,
             message,
@@ -96,9 +96,9 @@ class SolicitationController {
             id: idSolicitation,
         });
         if (!solicitation)
-            throw new api_errors_1.NotFoundError('The solicitation does not exist');
+            throw new api_errors_1.NotFoundError('A solicitação não existe');
         if (solicitation.valid)
-            throw new api_errors_1.NotFoundError('A valid solicitation cannot be deleted');
+            throw new api_errors_1.NotFoundError('Uma solicitação válida não pode ser excluída');
         await solicitationRepository_1.solicitationRepository.delete(idSolicitation);
         return res.status(204).send();
     }

@@ -15,12 +15,12 @@ class NotificationController {
     async create(req, res) {
         const { title, body, device_id } = req.body;
         if (!title)
-            throw new api_errors_1.BadRequestError('Title is required');
+            throw new api_errors_1.BadRequestError('O título da notificação é obrigatório');
         if (!body)
-            throw new api_errors_1.BadRequestError('Body is required');
+            throw new api_errors_1.BadRequestError('O corpo da notificação é obrigatório');
         const device = await deviceRepository_1.deviceRepository.findOneBy({ id: device_id });
         if (!device)
-            throw new api_errors_1.BadRequestError('The device does not exist');
+            throw new api_errors_1.BadRequestError('O aparelho não existe');
         const newNotification = notificationRepository_1.notificationRepository.create({
             title,
             body,
@@ -36,10 +36,10 @@ class NotificationController {
             id: idNotification,
         });
         if (!notification)
-            throw new api_errors_1.NotFoundError('The notification does not exist');
+            throw new api_errors_1.NotFoundError('A notificação não existe');
         const device = await deviceRepository_1.deviceRepository.findOneBy({ id: device_id });
         if (!device)
-            throw new api_errors_1.BadRequestError('The device does not exist');
+            throw new api_errors_1.BadRequestError('O apareho não existe');
         await notificationRepository_1.notificationRepository.update(idNotification, {
             title,
             body,
@@ -56,7 +56,7 @@ class NotificationController {
             id: idNotification,
         });
         if (!notification)
-            throw new api_errors_1.NotFoundError('The notification does not exist');
+            throw new api_errors_1.NotFoundError('A notificação não existe');
         await notificationRepository_1.notificationRepository.delete(idNotification);
         return res.status(204).send();
     }

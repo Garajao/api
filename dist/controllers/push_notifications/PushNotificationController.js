@@ -24,6 +24,7 @@ class PushNotificationController {
                     to: notification.device.push_token,
                     title: notification.title,
                     body: notification.body,
+                    priority: 'high',
                 };
             }));
             ticket.map(async (expo, key) => {

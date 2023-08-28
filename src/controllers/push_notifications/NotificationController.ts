@@ -17,13 +17,14 @@ export class NotificationController {
   async create(req: Request, res: Response) {
     const { title, body, device_id } = req.body
 
-    if (!title) throw new BadRequestError('Title is required')
+    if (!title)
+      throw new BadRequestError('O título da notificação é obrigatório')
 
-    if (!body) throw new BadRequestError('Body is required')
+    if (!body) throw new BadRequestError('O corpo da notificação é obrigatório')
 
     const device = await deviceRepository.findOneBy({ id: device_id })
 
-    if (!device) throw new BadRequestError('The device does not exist')
+    if (!device) throw new BadRequestError('O aparelho não existe')
 
     const newNotification = notificationRepository.create({
       title,
@@ -44,12 +45,11 @@ export class NotificationController {
       id: idNotification,
     })
 
-    if (!notification)
-      throw new NotFoundError('The notification does not exist')
+    if (!notification) throw new NotFoundError('A notificação não existe')
 
     const device = await deviceRepository.findOneBy({ id: device_id })
 
-    if (!device) throw new BadRequestError('The device does not exist')
+    if (!device) throw new BadRequestError('O apareho não existe')
 
     await notificationRepository.update(idNotification, {
       title,
@@ -70,8 +70,7 @@ export class NotificationController {
       id: idNotification,
     })
 
-    if (!notification)
-      throw new NotFoundError('The notification does not exist')
+    if (!notification) throw new NotFoundError('A notificação não existe')
 
     await notificationRepository.delete(idNotification)
 

@@ -38,9 +38,9 @@ export class SolicitationController {
       where: { gate: { id: idGate }, valid: false },
     })
 
-    if (!message) throw new BadRequestError('Message is required')
+    if (!message) throw new BadRequestError('A mensagem é obrigatória')
 
-    if (!gate) throw new NotFoundError('The gate does not exist')
+    if (!gate) throw new NotFoundError('O portão não existe')
 
     if (!code) {
       status = !gate.open
@@ -58,7 +58,7 @@ export class SolicitationController {
     if (!valid) {
       if (solicitation)
         throw new BadRequestError(
-          'There is still a pending request for gate ' + gate.name,
+          `Ainda existe uma solicitação pendente para o portão ${gate.name}`,
         )
 
       await gateRepository.update(idGate, { provisional_open: status })
@@ -78,7 +78,7 @@ export class SolicitationController {
             title: gate.name,
             body: `${
               status ? messages[0].description : messages[1].description
-            } by control`,
+            } pelo controle`,
           } as Notification)
         })
       })
@@ -99,8 +99,7 @@ export class SolicitationController {
       id: idSolicitation,
     })
 
-    if (!solicitation)
-      throw new NotFoundError('The solicitation does not exist')
+    if (!solicitation) throw new NotFoundError('A solicitação não existe')
 
     await solicitationRepository.update(idSolicitation, {
       status,
@@ -119,11 +118,10 @@ export class SolicitationController {
       id: idSolicitation,
     })
 
-    if (!solicitation)
-      throw new NotFoundError('The solicitation does not exist')
+    if (!solicitation) throw new NotFoundError('A solicitação não existe')
 
     if (solicitation.valid)
-      throw new NotFoundError('A valid solicitation cannot be deleted')
+      throw new NotFoundError('Uma solicitação válida não pode ser excluída')
 
     await solicitationRepository.delete(idSolicitation)
 

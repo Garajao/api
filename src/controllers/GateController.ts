@@ -22,7 +22,7 @@ export class GateController {
 
     const gate = await gateRepository.findOneBy({ id: idGate })
 
-    if (!gate) throw new NotFoundError('The gate does not exist')
+    if (!gate) throw new NotFoundError('O portão não existe')
 
     await gateRepository.update(idGate, {
       consulted_at: new Date().toISOString(),
@@ -36,7 +36,7 @@ export class GateController {
 
     const user = await userRepository.findOneBy({ id: idUser })
 
-    if (!user) throw new NotFoundError('The user does not exist')
+    if (!user) throw new NotFoundError('O usuário não existe')
 
     const gates = await gateRepository
       .createQueryBuilder('gate')
@@ -67,17 +67,17 @@ export class GateController {
   async create(req: Request, res: Response) {
     const { name, cep, address, complement, number, city, uf, image } = req.body
 
-    if (!name) throw new BadRequestError('Name is required')
+    if (!name) throw new BadRequestError('O nome é obrigatório')
 
-    if (!cep) throw new BadRequestError('CEP is required')
+    if (!cep) throw new BadRequestError('O CEP é obrigatório')
 
-    if (!address) throw new BadRequestError('Address is required')
+    if (!address) throw new BadRequestError('O endereço é obrigatório')
 
-    if (!number) throw new BadRequestError('Number is required')
+    if (!number) throw new BadRequestError('O número é obrigatório')
 
-    if (!city) throw new BadRequestError('City is required')
+    if (!city) throw new BadRequestError('A cidade é obrigatória')
 
-    if (!uf) throw new BadRequestError('UF is required')
+    if (!uf) throw new BadRequestError('O UF é obrigatório')
 
     const newGate = gateRepository.create({
       name,
@@ -111,7 +111,7 @@ export class GateController {
 
     const gate = await gateRepository.findOneBy({ id: idGate })
 
-    if (!gate) throw new NotFoundError('The gate does not exist')
+    if (!gate) throw new NotFoundError('O portão não existe')
 
     await gateRepository.update(idGate, {
       name,
@@ -134,7 +134,7 @@ export class GateController {
 
     const gate = await gateRepository.findOneBy({ id: idGate })
 
-    if (!gate) throw new NotFoundError('The gate does not exist')
+    if (!gate) throw new NotFoundError('O portão não existe')
 
     await gateRepository.delete(idGate)
 
@@ -150,7 +150,7 @@ export class GateController {
       where: { id: idGate },
     })
 
-    if (!gate) throw new NotFoundError('The gate does not exist')
+    if (!gate) throw new NotFoundError('O portão não existe')
 
     const solicitations = await solicitationRepository.find({
       relations: { user: true },
@@ -174,7 +174,7 @@ export class GateController {
               title: gate.name,
               body: `${
                 status ? messages[0].description : messages[1].description
-              } by ${solicitation.user?.name}`,
+              } por ${solicitation.user?.name}`,
             } as Notification)
           })
         }
@@ -196,7 +196,7 @@ export class GateController {
 
     const gate = await gateRepository.findOneBy({ id: idGate })
 
-    if (!gate) throw new NotFoundError('The gate does not exist')
+    if (!gate) throw new NotFoundError('O portão não existe')
 
     const solicitations = await solicitationRepository.find({
       relations: { user: true, gate: true, message: true },

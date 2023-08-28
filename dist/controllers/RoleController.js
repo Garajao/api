@@ -15,9 +15,9 @@ class RoleController {
     async create(req, res) {
         const { name, level } = req.body;
         if (!name)
-            throw new api_errors_1.BadRequestError('Name is required');
+            throw new api_errors_1.BadRequestError('O nome é obrigatório');
         if (!level)
-            throw new api_errors_1.BadRequestError('Level is required');
+            throw new api_errors_1.BadRequestError('O nível é obrigatório');
         const newRole = roleRepository_1.roleRepository.create({
             name,
             level,
@@ -31,7 +31,7 @@ class RoleController {
         const { idRole } = req.params;
         const role = await roleRepository_1.roleRepository.findOneBy({ id: idRole });
         if (!role)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('O papel não existe');
         await roleRepository_1.roleRepository.update(idRole, {
             name,
             level,
@@ -42,7 +42,7 @@ class RoleController {
         const { idRole } = req.params;
         const role = await roleRepository_1.roleRepository.findOneBy({ id: idRole });
         if (!role)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('O papel não existe');
         await roleRepository_1.roleRepository.delete(idRole);
         return res.status(204).send();
     }

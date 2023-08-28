@@ -13,7 +13,7 @@ export class MessageController {
   async create(req: Request, res: Response) {
     const { description } = req.body
 
-    if (!description) throw new BadRequestError('Description is required')
+    if (!description) throw new BadRequestError('A descrição é obrigatória')
 
     const newMessage = messageRepository.create({
       description,
@@ -30,7 +30,7 @@ export class MessageController {
 
     const message = await messageRepository.findOneBy({ id: Number(idMessage) })
 
-    if (!message) throw new NotFoundError('The message does not exist')
+    if (!message) throw new NotFoundError('A mensagem não existe')
 
     await messageRepository.update(idMessage, {
       description,
@@ -44,7 +44,7 @@ export class MessageController {
 
     const message = await messageRepository.findOneBy({ id: Number(idMessage) })
 
-    if (!message) throw new NotFoundError('The message does not exist')
+    if (!message) throw new NotFoundError('A mensagem não existe')
 
     await messageRepository.delete(idMessage)
 
