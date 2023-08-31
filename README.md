@@ -40,6 +40,7 @@ yarn dev
 - [PostgreSQL](https://www.postgresql.org/)
 - [TypeORM](https://typeorm.io/)
 - [Expo server SDK](https://github.com/expo/expo-server-sdk-node)
+- [Cron job](https://cron-job.org/en/)
 
 ## ⚙️ API documentation
 

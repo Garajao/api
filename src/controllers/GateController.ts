@@ -9,7 +9,6 @@ import { Solicitation } from '../entities/Solicitation'
 import { messageRepository } from '../repositories/messageRepository'
 import { PushNotificationController } from './push_notifications/PushNotificationController'
 import { Notification } from '../entities/Notification'
-
 export class GateController {
   async list(req: Request, res: Response) {
     const gates = await gateRepository.find({ loadRelationIds: true })
@@ -99,6 +98,7 @@ export class GateController {
       name,
       open,
       provisional_open,
+      notified,
       cep,
       address,
       complement,
@@ -117,6 +117,7 @@ export class GateController {
       name,
       open,
       provisional_open,
+      notified,
       cep,
       address,
       complement,
@@ -167,17 +168,17 @@ export class GateController {
       const notifications = [] as Notification[]
 
       gate.users.map(async (user) => {
-        if (solicitation.user?.id !== user.id) {
-          user.devices.map(async (device) => {
-            notifications.push({
-              device,
-              title: gate.name,
-              body: `${
-                status ? messages[0].description : messages[1].description
-              } por ${solicitation.user?.name}`,
-            } as Notification)
-          })
-        }
+        if (solicitation.user?.id === user.id) return
+
+        user.devices.map(async (device) => {
+          notifications.push({
+            device,
+            title: gate.name,
+            body: `${
+              status ? messages[0].description : messages[1].description
+            } por ${solicitation.user?.name}`,
+          } as Notification)
+        })
       })
 
       new PushNotificationController().send(notifications)
@@ -185,6 +186,7 @@ export class GateController {
     await gateRepository.update(idGate, {
       open: status,
       provisional_open: status,
+      notified: false,
     })
 
     return res.status(204).send()
@@ -206,6 +208,66 @@ export class GateController {
       take: Number(limit),
     })
 
-    return res.json(solicitations)
+    return res.status(200).json(solicitations)
+  }
+
+  async checkGateIsOpen(req: Request, res: Response) {
+    const spreadDateToOnline = new Date()
+    spreadDateToOnline.setSeconds(
+      spreadDateToOnline.getSeconds() -
+        Number(process.env.TIME_LIMIT_TO_ONLINE),
+    )
+
+    const spreadDateToNotify = new Date()
+    spreadDateToNotify.setMinutes(
+      spreadDateToNotify.getMinutes() -
+        Number(process.env.TIMEOUT_TO_NOTIFY_GATE),
+    )
+
+    const gates = await gateRepository
+      .createQueryBuilder('gate')
+      .leftJoinAndMapOne(
+        'gate.solicitations',
+        Solicitation,
+        'solicitations',
+        'solicitations.valid = true and solicitations.gate = gate.id and solicitations.message IN (:...ids)',
+        { ids: [1, 2] },
+      )
+      .leftJoinAndSelect('gate.users', 'users')
+      .leftJoinAndSelect('users.devices', 'devices')
+      .where('gate.open = :open', { open: true })
+      .andWhere('gate.consulted_at > :date', {
+        date: spreadDateToOnline,
+      })
+      .orderBy('solicitations.updated_at', 'DESC', 'NULLS LAST')
+      .getMany()
+
+    const notifications = [] as Notification[]
+
+    gates.map(async (gate) => {
+      const solicitation = gate.solicitations as unknown as Solicitation
+
+      if (spreadDateToNotify < solicitation.updated_at) return
+
+      if (gate.notified) return
+
+      gate.users.map(async (user) => {
+        user.devices.map(async (device) => {
+          notifications.push({
+            device,
+            title: gate.name,
+            body: `Atenção, o seu portão está aberto a mais de ${process.env.TIMEOUT_TO_NOTIFY_GATE} minuto(s), caso tenha esquecido, acesse o app para fechá-lo!`,
+          } as Notification)
+        })
+      })
+
+      await gateRepository.update(gate.id, {
+        notified: true,
+      })
+    })
+
+    new PushNotificationController().send(notifications)
+
+    return res.status(204).send()
   }
 }

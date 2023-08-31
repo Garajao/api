@@ -105,7 +105,7 @@ class UserController {
         return res.status(204).send();
     }
     async signIn(req, res) {
-        var _a;
+        var _a, _b;
         const { login, password } = req.body;
         if (!login)
             throw new api_errors_1.BadRequestError('O login é obrigatório');
@@ -123,7 +123,7 @@ class UserController {
         if (!checkPassword)
             throw new api_errors_1.BadRequestError('Usuário ou senha incorretos');
         const token = jsonwebtoken_1.default.sign({ user_id: user.id }, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '', {
-            expiresIn: '30d',
+            expiresIn: (_b = process.env.JWT_EXPIRES_IN) !== null && _b !== void 0 ? _b : '30d',
         });
         await userRepository_1.userRepository.update(user.id, {
             last_login: new Date().toISOString(),

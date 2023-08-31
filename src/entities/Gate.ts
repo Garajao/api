@@ -26,6 +26,9 @@ export class Gate {
   @Column({ type: 'boolean', default: false })
   provisional_open: boolean
 
+  @Column({ type: 'boolean', default: false })
+  notified: boolean
+
   @Column({ type: 'text' })
   cep: string
 

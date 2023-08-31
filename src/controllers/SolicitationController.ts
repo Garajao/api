@@ -66,6 +66,7 @@ export class SolicitationController {
       await gateRepository.update(idGate, {
         open: status,
         provisional_open: status,
+        notified: false,
       })
 
       const messages = await messageRepository.findBy({ id: In([1, 2]) })

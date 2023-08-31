@@ -57,6 +57,7 @@ class SolicitationController {
             await gateRepository_1.gateRepository.update(idGate, {
                 open: status,
                 provisional_open: status,
+                notified: false,
             });
             const messages = await messageRepository_1.messageRepository.findBy({ id: (0, typeorm_1.In)([1, 2]) });
             const notifications = [];

@@ -156,7 +156,7 @@ export class UserController {
     if (!checkPassword) throw new BadRequestError('Usuário ou senha incorretos')
 
     const token = jwt.sign({ user_id: user.id }, process.env.JWT_PASS ?? '', {
-      expiresIn: '30d',
+      expiresIn: process.env.JWT_EXPIRES_IN ?? '30d',
     })
 
     await userRepository.update(user.id, {

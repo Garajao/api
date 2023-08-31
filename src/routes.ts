@@ -12,9 +12,10 @@ import { NotificationController } from './controllers/push_notifications/Notific
 const routes = Router()
 
 routes.post('/users/signIn', new UserController().signIn)
-routes.post('/users/signOut', new UserController().signOut)
 
 routes.use(authMiddleware)
+
+routes.post('/users/signOut', new UserController().signOut)
 
 routes.get('/users', new UserController().list)
 routes.post('/users', new UserController().create)
@@ -23,6 +24,7 @@ routes.delete('/users/:idUser', new UserController().delete)
 routes.get('/users/profile', new UserController().profile)
 routes.post('/users/:idUser/gate', new UserController().userGate)
 
+routes.get('/gates/open', new GateController().checkGateIsOpen)
 routes.get('/gates', new GateController().list)
 routes.get('/gates/:idGate', new GateController().find)
 routes.get('/gates/:idUser/user', new GateController().filterByUser)
