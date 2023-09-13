@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SolicitationController = void 0;
-const typeorm_1 = require("typeorm");
 const solicitationRepository_1 = require("../repositories/solicitationRepository");
 const userRepository_1 = require("../repositories/userRepository");
 const gateRepository_1 = require("../repositories/gateRepository");
@@ -22,6 +21,8 @@ class SolicitationController {
     async create(req, res) {
         let { status, message, code, valid, user_id } = req.body;
         const { idGate } = req.params;
+        if (!message)
+            throw new api_errors_1.BadRequestError('A mensagem é obrigatória');
         const user = await userRepository_1.userRepository.findOneBy({
             id: user_id !== null && user_id !== void 0 ? user_id : '00000000-0000-0000-0000-000000000000',
         });
@@ -33,8 +34,11 @@ class SolicitationController {
             relations: { gate: true },
             where: { gate: { id: idGate }, valid: false },
         });
-        if (!message)
-            throw new api_errors_1.BadRequestError('A mensagem é obrigatória');
+        const messageExists = await messageRepository_1.messageRepository.findOneBy({
+            id: message,
+        });
+        if (!messageExists)
+            throw new api_errors_1.NotFoundError('A mensagem não existe');
         if (!gate)
             throw new api_errors_1.NotFoundError('O portão não existe');
         if (!code) {
@@ -42,7 +46,7 @@ class SolicitationController {
         }
         const newSolicitation = solicitationRepository_1.solicitationRepository.create({
             status,
-            message,
+            message: messageExists,
             code,
             valid,
             gate,
@@ -59,14 +63,13 @@ class SolicitationController {
                 provisional_open: status,
                 notified: false,
             });
-            const messages = await messageRepository_1.messageRepository.findBy({ id: (0, typeorm_1.In)([1, 2]) });
             const notifications = [];
             gate.users.map(async (user) => {
                 user.devices.map(async (device) => {
                     notifications.push({
                         device,
                         title: gate.name,
-                        body: `${status ? messages[0].description : messages[1].description} pelo controle`,
+                        body: `${messageExists.description} pelo controle`,
                     });
                 });
             });

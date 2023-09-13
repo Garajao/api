@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { In } from 'typeorm'
 
 import { solicitationRepository } from '../repositories/solicitationRepository'
 import { userRepository } from '../repositories/userRepository'
@@ -26,6 +25,8 @@ export class SolicitationController {
     let { status, message, code, valid, user_id } = req.body
     const { idGate } = req.params
 
+    if (!message) throw new BadRequestError('A mensagem é obrigatória')
+
     const user = await userRepository.findOneBy({
       id: user_id ?? '00000000-0000-0000-0000-000000000000',
     })
@@ -37,8 +38,11 @@ export class SolicitationController {
       relations: { gate: true },
       where: { gate: { id: idGate }, valid: false },
     })
+    const messageExists = await messageRepository.findOneBy({
+      id: message,
+    })
 
-    if (!message) throw new BadRequestError('A mensagem é obrigatória')
+    if (!messageExists) throw new NotFoundError('A mensagem não existe')
 
     if (!gate) throw new NotFoundError('O portão não existe')
 
@@ -48,7 +52,7 @@ export class SolicitationController {
 
     const newSolicitation = solicitationRepository.create({
       status,
-      message,
+      message: messageExists,
       code,
       valid,
       gate,
@@ -69,7 +73,6 @@ export class SolicitationController {
         notified: false,
       })
 
-      const messages = await messageRepository.findBy({ id: In([1, 2]) })
       const notifications = [] as Notification[]
 
       gate.users.map(async (user) => {
@@ -77,9 +80,7 @@ export class SolicitationController {
           notifications.push({
             device,
             title: gate.name,
-            body: `${
-              status ? messages[0].description : messages[1].description
-            } pelo controle`,
+            body: `${messageExists.description} pelo controle`,
           } as Notification)
         })
       })
