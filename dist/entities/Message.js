@@ -31,7 +31,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Message.prototype, "updated_at", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Solicitation_1.Solicitation, solicitation => solicitation.message),
+    (0, typeorm_1.OneToMany)(() => Solicitation_1.Solicitation, (solicitation) => solicitation.message),
     __metadata("design:type", Array)
 ], Message.prototype, "solicitations", void 0);
 exports.Message = Message = __decorate([

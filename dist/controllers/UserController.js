@@ -4,43 +4,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
-const userRepository_1 = require("../repositories/userRepository");
-const gateRepository_1 = require("../repositories/gateRepository");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const api_errors_1 = require("../helpers/api-errors");
+const userRepository_1 = require("../repositories/userRepository");
+const gateRepository_1 = require("../repositories/gateRepository");
 const roleRepository_1 = require("../repositories/roleRepository");
+const api_errors_1 = require("../helpers/api-errors");
 class UserController {
     async list(req, res) {
         const users = await userRepository_1.userRepository.find({
-            loadRelationIds: true
+            loadRelationIds: true,
         });
         return res.status(200).json(users);
     }
     async create(req, res) {
         const { name, email, login, password, image, role_id } = req.body;
         if (!name)
-            throw new api_errors_1.BadRequestError('Name is required');
+            throw new api_errors_1.BadRequestError('O nome é obrigatório');
         if (!email)
-            throw new api_errors_1.BadRequestError('Email is required');
+            throw new api_errors_1.BadRequestError('O email é obrigatório');
         if (!login)
-            throw new api_errors_1.BadRequestError('Login is required');
+            throw new api_errors_1.BadRequestError('O login é obrigatório');
         if (!password)
-            throw new api_errors_1.BadRequestError('Password is required');
+            throw new api_errors_1.BadRequestError('A senha é obrigatória');
         if (!role_id)
-            throw new api_errors_1.BadRequestError('Role is required');
+            throw new api_errors_1.BadRequestError('O papel é obrigatório');
         const loginExists = await userRepository_1.userRepository.findOneBy({ login });
         if (loginExists)
-            throw new api_errors_1.BadRequestError('User login already exists');
+            throw new api_errors_1.BadRequestError('O login já existe');
         const emailExists = await userRepository_1.userRepository.findOneBy({ email });
         if (emailExists)
-            throw new api_errors_1.BadRequestError('User email already existse');
+            throw new api_errors_1.BadRequestError('O email já existe');
         const hashPassword = await bcrypt_1.default.hash(password, 10);
         const role = await roleRepository_1.roleRepository.findOneBy({ id: role_id });
         if (!role)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('O papel não existe');
         const newUser = userRepository_1.userRepository.create({
-            name, email, login, password: hashPassword, active: true, image, role
+            name,
+            email,
+            login,
+            password: hashPassword,
+            active: true,
+            image,
+            role,
         });
         await userRepository_1.userRepository.save(newUser);
         return res.status(201).json({ id: newUser.id });
@@ -50,12 +56,16 @@ class UserController {
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
         if (!user)
-            throw new api_errors_1.NotFoundError('The user does not exist');
+            throw new api_errors_1.NotFoundError('O usuário não existe');
         const role = await roleRepository_1.roleRepository.findOneBy({ id: role_id });
         if (!role)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('O papel não existe');
         await userRepository_1.userRepository.update(idUser, {
-            name, email, active, image, role
+            name,
+            email,
+            active,
+            image,
+            role,
         });
         return res.status(204).send();
     }
@@ -63,7 +73,7 @@ class UserController {
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
         if (!user)
-            throw new api_errors_1.NotFoundError('The user does not exist');
+            throw new api_errors_1.NotFoundError('O usuário não existe');
         await userRepository_1.userRepository.delete(idUser);
         return res.status(204).send();
     }
@@ -73,47 +83,62 @@ class UserController {
     async userGate(req, res) {
         const { gate_id } = req.body;
         const { idUser } = req.params;
-        const user = await userRepository_1.userRepository.findOne({ relations: { gates: true }, where: { id: idUser } });
+        const user = await userRepository_1.userRepository.findOne({
+            relations: { gates: true },
+            where: { id: idUser },
+        });
         if (!user)
-            throw new api_errors_1.NotFoundError('The user does not exist');
+            throw new api_errors_1.NotFoundError('O usuário não existe');
         if (!gate_id)
-            throw new api_errors_1.BadRequestError('Gate is required');
+            throw new api_errors_1.BadRequestError('O portão é obrigatório');
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: gate_id });
         if (!gate)
-            throw new api_errors_1.NotFoundError('The gate does not exist');
-        const checkRelations = user.gates.find(user_gate => user_gate.id == gate.id);
+            throw new api_errors_1.NotFoundError('O portão não existe');
+        const checkRelations = user.gates.find((user_gate) => user_gate.id === gate.id);
         if (checkRelations)
-            throw new api_errors_1.BadRequestError('The gate has already been linked to the user');
+            throw new api_errors_1.BadRequestError('O portão já está relacionado ao usuário');
         const userUpdate = {
             ...user,
-            gates: [...user.gates, gate]
+            gates: [...user.gates, gate],
         };
         await userRepository_1.userRepository.save(userUpdate);
         return res.status(204).send();
     }
-    async login(req, res) {
-        var _a;
+    async signIn(req, res) {
+        var _a, _b;
         const { login, password } = req.body;
         if (!login)
-            throw new api_errors_1.BadRequestError('Login is required');
+            throw new api_errors_1.BadRequestError('O login é obrigatório');
         if (!password)
-            throw new api_errors_1.BadRequestError('Password is required');
-        const user = await userRepository_1.userRepository.findOne({ loadRelationIds: true, where: { login } });
-        if (!user) {
-            throw new api_errors_1.BadRequestError('Incorrect username or password');
-        }
-        if (!user.active) {
-            throw new api_errors_1.ForbiddenError('Inactive user');
-        }
+            throw new api_errors_1.BadRequestError('A senha é obrigatória');
+        const user = await userRepository_1.userRepository.findOne({
+            relations: { devices: true },
+            where: { login },
+        });
+        if (!user)
+            throw new api_errors_1.BadRequestError('Usuário ou senha incorretos');
+        if (!user.active)
+            throw new api_errors_1.ForbiddenError('Usuário inativo');
         const checkPassword = await bcrypt_1.default.compare(password, user.password);
-        if (!checkPassword) {
-            throw new api_errors_1.BadRequestError('Incorrect username or password');
-        }
-        const token = jsonwebtoken_1.default.sign({ user_id: user.id }, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '', { expiresIn: '30d' });
+        if (!checkPassword)
+            throw new api_errors_1.BadRequestError('Usuário ou senha incorretos');
+        const token = jsonwebtoken_1.default.sign({ user_id: user.id }, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '', {
+            expiresIn: (_b = process.env.JWT_EXPIRES_IN) !== null && _b !== void 0 ? _b : '30d',
+        });
+        await userRepository_1.userRepository.update(user.id, {
+            last_login: new Date().toISOString(),
+        });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password: _, ...userLogin } = user;
         return res.status(200).json({
             user: userLogin,
-            token
+            token,
+        });
+    }
+    async signOut(req, res) {
+        // const { login, password } = req.body
+        return res.status(200).json({
+            message: 'Logout realizado com sucesso',
         });
     }
 }

@@ -11,9 +11,9 @@ class MessageController {
     async create(req, res) {
         const { description } = req.body;
         if (!description)
-            throw new api_errors_1.BadRequestError('Description is required');
+            throw new api_errors_1.BadRequestError('A descrição é obrigatória');
         const newMessage = messageRepository_1.messageRepository.create({
-            description
+            description,
         });
         await messageRepository_1.messageRepository.save(newMessage);
         // return res.status(201).json({ id: newMessage.id })
@@ -24,9 +24,9 @@ class MessageController {
         const { idMessage } = req.params;
         const message = await messageRepository_1.messageRepository.findOneBy({ id: Number(idMessage) });
         if (!message)
-            throw new api_errors_1.NotFoundError('The message does not exist');
+            throw new api_errors_1.NotFoundError('A mensagem não existe');
         await messageRepository_1.messageRepository.update(idMessage, {
-            description
+            description,
         });
         return res.status(204).send();
     }
@@ -34,7 +34,7 @@ class MessageController {
         const { idMessage } = req.params;
         const message = await messageRepository_1.messageRepository.findOneBy({ id: Number(idMessage) });
         if (!message)
-            throw new api_errors_1.NotFoundError('The role does not exist');
+            throw new api_errors_1.NotFoundError('A mensagem não existe');
         await messageRepository_1.messageRepository.delete(idMessage);
         return res.status(204).send();
     }

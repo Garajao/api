@@ -41,17 +41,19 @@ __decorate([
     __metadata("design:type", Date)
 ], Solicitation.prototype, "updated_at", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => Gate_1.Gate, gate => gate.solicitations, { nullable: false }),
+    (0, typeorm_1.ManyToOne)(() => Gate_1.Gate, (gate) => gate.solicitations, { nullable: false }),
     (0, typeorm_1.JoinColumn)({ name: 'gate_id' }),
     __metadata("design:type", Gate_1.Gate)
 ], Solicitation.prototype, "gate", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => User_1.User, user => user.solicitations),
+    (0, typeorm_1.ManyToOne)(() => User_1.User, (user) => user.solicitations),
     (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
     __metadata("design:type", Object)
 ], Solicitation.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => Message_1.Message, message => message.solicitations, { nullable: false }),
+    (0, typeorm_1.ManyToOne)(() => Message_1.Message, (message) => message.solicitations, {
+        nullable: false,
+    }),
     (0, typeorm_1.JoinColumn)({ name: 'message_id' }),
     __metadata("design:type", Object)
 ], Solicitation.prototype, "message", void 0);
