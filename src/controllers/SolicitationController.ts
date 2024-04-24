@@ -9,6 +9,25 @@ import { PushNotificationController } from './push_notifications/PushNotificatio
 import { Notification } from '../entities/Notification'
 
 export class SolicitationController {
+  /**
+   * @swagger
+   * /api/solicitations:
+   *   get:
+   *     summary: Get all solicitations
+   *     tags:
+   *       - Solicitations
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Solicitation'
+   */
   async list(req: Request, res: Response) {
     const solicitations = await solicitationRepository.find({
       relations: {
@@ -21,6 +40,49 @@ export class SolicitationController {
     return res.json(solicitations)
   }
 
+  /**
+   * @swagger
+   * /api/solicitations/{idGate}/gate:
+   *   post:
+   *     summary: Create a new solicitation
+   *     tags:
+   *       - Solicitations
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idGate
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               status:
+   *                 type: boolean
+   *               message:
+   *                 type: number
+   *               code:
+   *                 type: string
+   *               valid:
+   *                 type: boolean
+   *               user_id:
+   *                 type: string
+   *     responses:
+   *       201:
+   *         description: Created
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: string
+   */
   async create(req: Request, res: Response) {
     let { status, message, code, valid, user_id } = req.body
     const { idGate } = req.params
@@ -93,6 +155,40 @@ export class SolicitationController {
     return res.status(201).json({ id: newSolicitation.id })
   }
 
+  /**
+   * @swagger
+   * /api/solicitations/{idSolicitation}:
+   *   put:
+   *     summary: Update solicitation
+   *     tags:
+   *       - Solicitations
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idSolicitation
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               status:
+   *                 type: boolean
+   *               message:
+   *                 type: number
+   *               code:
+   *                 type: string
+   *               valid:
+   *                 type: boolean
+   *     responses:
+   *       204:
+   *         description: No Content
+   */
   async update(req: Request, res: Response) {
     const { status, message, code, valid } = req.body
     const { idSolicitation } = req.params
@@ -113,6 +209,25 @@ export class SolicitationController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/solicitations/{idSolicitation}:
+   *   delete:
+   *     summary: Delete solicitation
+   *     tags:
+   *       - Solicitations
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idSolicitation
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       204:
+   *         description: No Content
+   */
   async delete(req: Request, res: Response) {
     const { idSolicitation } = req.params
 

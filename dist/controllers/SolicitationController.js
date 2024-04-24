@@ -8,6 +8,25 @@ const api_errors_1 = require("../helpers/api-errors");
 const messageRepository_1 = require("../repositories/messageRepository");
 const PushNotificationController_1 = require("./push_notifications/PushNotificationController");
 class SolicitationController {
+    /**
+     * @swagger
+     * /api/solicitations:
+     *   get:
+     *     summary: Get all solicitations
+     *     tags:
+     *       - Solicitations
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/Solicitation'
+     */
     async list(req, res) {
         const solicitations = await solicitationRepository_1.solicitationRepository.find({
             relations: {
@@ -18,6 +37,49 @@ class SolicitationController {
         });
         return res.json(solicitations);
     }
+    /**
+     * @swagger
+     * /api/solicitations/{idGate}/gate:
+     *   post:
+     *     summary: Create a new solicitation
+     *     tags:
+     *       - Solicitations
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idGate
+     *         required: true
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               status:
+     *                 type: boolean
+     *               message:
+     *                 type: number
+     *               code:
+     *                 type: string
+     *               valid:
+     *                 type: boolean
+     *               user_id:
+     *                 type: string
+     *     responses:
+     *       201:
+     *         description: Created
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 id:
+     *                   type: string
+     */
     async create(req, res) {
         let { status, message, code, valid, user_id } = req.body;
         const { idGate } = req.params;
@@ -78,6 +140,40 @@ class SolicitationController {
         await solicitationRepository_1.solicitationRepository.save(newSolicitation);
         return res.status(201).json({ id: newSolicitation.id });
     }
+    /**
+     * @swagger
+     * /api/solicitations/{idSolicitation}:
+     *   put:
+     *     summary: Update solicitation
+     *     tags:
+     *       - Solicitations
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idSolicitation
+     *         required: true
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               status:
+     *                 type: boolean
+     *               message:
+     *                 type: number
+     *               code:
+     *                 type: string
+     *               valid:
+     *                 type: boolean
+     *     responses:
+     *       204:
+     *         description: No Content
+     */
     async update(req, res) {
         const { status, message, code, valid } = req.body;
         const { idSolicitation } = req.params;
@@ -94,6 +190,25 @@ class SolicitationController {
         });
         return res.status(204).send();
     }
+    /**
+     * @swagger
+     * /api/solicitations/{idSolicitation}:
+     *   delete:
+     *     summary: Delete solicitation
+     *     tags:
+     *       - Solicitations
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idSolicitation
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       204:
+     *         description: No Content
+     */
     async delete(req, res) {
         const { idSolicitation } = req.params;
         const solicitation = await solicitationRepository_1.solicitationRepository.findOneBy({

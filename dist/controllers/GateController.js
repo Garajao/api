@@ -10,10 +10,56 @@ const Solicitation_1 = require("../entities/Solicitation");
 const messageRepository_1 = require("../repositories/messageRepository");
 const PushNotificationController_1 = require("./push_notifications/PushNotificationController");
 class GateController {
+    /**
+     * @swagger
+     * /api/gates:
+     *   get:
+     *     summary: Get all gates
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/Gate'
+     */
     async list(req, res) {
         const gates = await gateRepository_1.gateRepository.find({ loadRelationIds: true });
         return res.json(gates);
     }
+    /**
+     * @swagger
+     * /api/gates/{idGate}:
+     *   get:
+     *     summary: Get a gate
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idGate
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: The gate ID
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 provisional_open:
+     *                   type: boolean
+     */
     async find(req, res) {
         const { idGate } = req.params;
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
@@ -24,6 +70,32 @@ class GateController {
         });
         return res.json({ provisional_open: gate === null || gate === void 0 ? void 0 : gate.provisional_open });
     }
+    /**
+     * @swagger
+     * /api/gates/{idUser}/user/:
+     *   get:
+     *     summary: Get all gates by user
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idUser
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: The user ID
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/Gate'
+     */
     async filterByUser(req, res) {
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
@@ -47,6 +119,49 @@ class GateController {
             .getMany();
         return res.json(gates);
     }
+    /**
+     * @swagger
+     * /api/gates:
+     *   post:
+     *     summary: Create a new gate
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *               cep:
+     *                 type: string
+     *               address:
+     *                 type: string
+     *               complement:
+     *                 type: string
+     *               number:
+     *                 type: string
+     *               city:
+     *                 type: string
+     *               uf:
+     *                 type: string
+     *               image:
+     *                 type: string
+     *     responses:
+     *       201:
+     *         description: Created
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 id:
+     *                   type: string
+     */
     async create(req, res) {
         const { name, cep, address, complement, number, city, uf, image } = req.body;
         if (!name)
@@ -74,6 +189,55 @@ class GateController {
         await gateRepository_1.gateRepository.save(newGate);
         return res.status(201).json({ id: newGate.id });
     }
+    /**
+     * @swagger
+     * /api/gates/{idGate}:
+     *   put:
+     *     summary: Update gate
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idGate
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: The gate ID
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *               open:
+     *                 type: boolean
+     *               provisional_open:
+     *                 type: boolean
+     *               notified:
+     *                 type: boolean
+     *               cep:
+     *                 type: string
+     *               address:
+     *                 type: string
+     *               complement:
+     *                 type: string
+     *               number:
+     *                 type: string
+     *               city:
+     *                 type: string
+     *               uf:
+     *                 type: string
+     *               image:
+     *                 type: string
+     *     responses:
+     *       204:
+     *         description: No content
+     */
     async update(req, res) {
         const { name, open, provisional_open, notified, cep, address, complement, number, city, uf, image, } = req.body;
         const { idGate } = req.params;
@@ -95,6 +259,26 @@ class GateController {
         });
         return res.status(204).send();
     }
+    /**
+     * @swagger
+     * /api/gates/{idGate}:
+     *   delete:
+     *     summary: Delete gate
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idGate
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: The gate ID
+     *     responses:
+     *       204:
+     *         description: No content
+     */
     async delete(req, res) {
         const { idGate } = req.params;
         const gate = await gateRepository_1.gateRepository.findOneBy({ id: idGate });
@@ -103,6 +287,34 @@ class GateController {
         await gateRepository_1.gateRepository.delete(idGate);
         return res.status(204).send();
     }
+    /**
+     * @swagger
+     * /api/gates/{idGate}/solicitations/valid:
+     *   put:
+     *     summary: Valid solicitations
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idGate
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: The gate ID
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             properties:
+     *               status:
+     *                 type: boolean
+     *     responses:
+     *       204:
+     *         description: No content
+     */
     async validSolicitations(req, res) {
         const { status } = req.body;
         const { idGate } = req.params;
@@ -145,6 +357,44 @@ class GateController {
         });
         return res.status(204).send();
     }
+    /**
+     * @swagger
+     * /api/gates/{idGate}/solicitations:
+     *   get:
+     *     summary: Get solicitations by gate
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idGate
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: The gate ID
+     *       - in: query
+     *         name: offset
+     *         required: false
+     *         schema:
+     *           type: string
+     *         description: The offset
+     *       - in: query
+     *         name: limit
+     *         required: false
+     *         schema:
+     *           type: string
+     *         description: The limit
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/Solicitation'
+     */
     async paging(req, res) {
         const { idGate } = req.params;
         const { offset, limit } = req.query;
@@ -160,6 +410,19 @@ class GateController {
         });
         return res.status(200).json(solicitations);
     }
+    /**
+     * @swagger
+     * /api/gates/open:
+     *   get:
+     *     summary: Check if the gate is open
+     *     tags:
+     *       - Gates
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       204:
+     *         description: No content
+     */
     async checkGateIsOpen(req, res) {
         const spreadDateToOnline = new Date();
         spreadDateToOnline.setSeconds(spreadDateToOnline.getSeconds() -

@@ -12,6 +12,25 @@ import {
 } from '../helpers/api-errors'
 
 export class UserController {
+  /**
+   * @swagger
+   * /api/users:
+   *   get:
+   *     summary: Get all users
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/User'
+   */
   async list(req: Request, res: Response) {
     const users = await userRepository.find({
       loadRelationIds: true,
@@ -20,6 +39,43 @@ export class UserController {
     return res.status(200).json(users)
   }
 
+  /**
+   * @swagger
+   * /api/users:
+   *   post:
+   *     summary: Create a new user
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               email:
+   *                 type: string
+   *               login:
+   *                 type: string
+   *               password:
+   *                 type: string
+   *               role_id:
+   *                 type: string
+   *     responses:
+   *       201:
+   *         description: Created
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: string
+   */
   async create(req: Request, res: Response) {
     const { name, email, login, password, image, role_id } = req.body
 
@@ -62,6 +118,46 @@ export class UserController {
     return res.status(201).json({ id: newUser.id })
   }
 
+  /**
+   * @swagger
+   * /api/users/{idUser}:
+   *   put:
+   *     summary: Update user
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idUser
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               email:
+   *                 type: string
+   *               active:
+   *                 type: boolean
+   *               image:
+   *                 type: string
+   *               role:
+   *                 type: string
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/User'
+   */
   async update(req: Request, res: Response) {
     const { name, email, active, image, role_id } = req.body
     const { idUser } = req.params
@@ -85,6 +181,25 @@ export class UserController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/users/{idUser}:
+   *   delete:
+   *     summary: Delete user
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idUser
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       204:
+   *         description: No Content
+   */
   async delete(req: Request, res: Response) {
     const { idUser } = req.params
 
@@ -97,10 +212,55 @@ export class UserController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/users/profile:
+   *   get:
+   *     summary: Get user profile
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/User'
+   */
   async profile(req: Request, res: Response) {
     return res.status(200).json(req.user)
   }
 
+  /**
+   * @swagger
+   * /api/users/{idUser}/gate:
+   *   post:
+   *     summary: Add gate to user
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idUser
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               gate_id:
+   *                 type: string
+   *     responses:
+   *       204:
+   *         description: No Content
+   */
   async userGate(req: Request, res: Response) {
     const { gate_id } = req.body
     const { idUser } = req.params
@@ -135,6 +295,37 @@ export class UserController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/users/signIn:
+   *   post:
+   *     summary: Sign in
+   *     tags:
+   *       - Authorization
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               login:
+   *                 type: string
+   *               password:
+   *                 type: string
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 user:
+   *                   $ref: '#/components/schemas/User'
+   *                 token:
+   *                   type: string
+   */
   async signIn(req: Request, res: Response) {
     const { login, password } = req.body
 
@@ -172,6 +363,26 @@ export class UserController {
     })
   }
 
+  /**
+   * @swagger
+   * /api/users/signOut:
+   *   post:
+   *     summary: Sign out
+   *     tags:
+   *       - Authorization
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   */
   async signOut(req: Request, res: Response) {
     // const { login, password } = req.body
 
