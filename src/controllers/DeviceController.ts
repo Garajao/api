@@ -4,6 +4,25 @@ import { BadRequestError, NotFoundError } from '../helpers/api-errors'
 import { deviceRepository } from '../repositories/deviceRepository'
 
 export class DeviceController {
+  /**
+   * @swagger
+   * /api/devices:
+   *   get:
+   *     summary: Get all devices
+   *     tags:
+   *       - Devices
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Device'
+   */
   async list(req: Request, res: Response) {
     const devices = await deviceRepository.find({
       relations: { user: true, notifications: true },
@@ -12,6 +31,32 @@ export class DeviceController {
     return res.status(200).json(devices)
   }
 
+  /**
+   * @swagger
+   * /api/devices/pushToken/{pushToken}:
+   *   get:
+   *     summary: Filter devices by push token
+   *     tags:
+   *       - Devices
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: pushToken
+   *         required: true
+   *         description: Push token
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Device'
+   */
   async filterByPushToken(req: Request, res: Response) {
     const { pushToken } = req.params
 
@@ -29,6 +74,45 @@ export class DeviceController {
     return res.status(200).json(devices)
   }
 
+  /**
+   * @swagger
+   * /api/devices:
+   *   post:
+   *     summary: Create device
+   *     tags:
+   *       - Devices
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               os:
+   *                 type: string
+   *               model:
+   *                 type: string
+   *               name:
+   *                 type: string
+   *               push_token:
+   *                 type: string
+   *               user:
+   *                 type: string
+   *             required:
+   *               - os
+   *               - model
+   *               - push_token
+   *               - user
+   *     responses:
+   *       201:
+   *         description: Created
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Device'
+   */
   async create(req: Request, res: Response) {
     const { os, model, name, push_token, user } = req.body
 
@@ -53,6 +137,48 @@ export class DeviceController {
     return res.status(201).json(newDevice)
   }
 
+  /**
+   * @swagger
+   * /api/devices/{idDevice}:
+   *   put:
+   *     summary: Update device
+   *     tags:
+   *       - Devices
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idDevice
+   *         required: true
+   *         description: Device ID
+   *         schema:
+   *           type: number
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               os:
+   *                 type: string
+   *               model:
+   *                 type: string
+   *               name:
+   *                 type: string
+   *               push_token:
+   *                 type: string
+   *               user:
+   *                 type: string
+   *             required:
+   *               - os
+   *               - model
+   *               - push_token
+   *               - user
+   *     responses:
+   *       204:
+   *         description: No content
+   */
   async update(req: Request, res: Response) {
     const { os, model, name, push_token, user } = req.body
     const { idDevice } = req.params
@@ -72,6 +198,26 @@ export class DeviceController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/devices/{idDevice}:
+   *   delete:
+   *     summary: Delete device
+   *     tags:
+   *       - Devices
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idDevice
+   *         required: true
+   *         description: Device ID
+   *         schema:
+   *           type: string
+   *     responses:
+   *       204:
+   *         description: No content
+   */
   async delete(req: Request, res: Response) {
     const { idDevice } = req.params
 
@@ -88,6 +234,26 @@ export class DeviceController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/devices/{idDevice}/restore:
+   *   put:
+   *     summary: Restore device
+   *     tags:
+   *       - Devices
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idDevice
+   *         required: true
+   *         description: Device ID
+   *         schema:
+   *           type: string
+   *     responses:
+   *       204:
+   *         description: No content
+   */
   async restore(req: Request, res: Response) {
     const { idDevice } = req.params
 

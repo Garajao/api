@@ -10,12 +10,58 @@ import { messageRepository } from '../repositories/messageRepository'
 import { PushNotificationController } from './push_notifications/PushNotificationController'
 import { Notification } from '../entities/Notification'
 export class GateController {
+  /**
+   * @swagger
+   * /api/gates:
+   *   get:
+   *     summary: Get all gates
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Gate'
+   */
   async list(req: Request, res: Response) {
     const gates = await gateRepository.find({ loadRelationIds: true })
 
     return res.json(gates)
   }
 
+  /**
+   * @swagger
+   * /api/gates/{idGate}:
+   *   get:
+   *     summary: Get a gate
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idGate
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The gate ID
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 provisional_open:
+   *                   type: boolean
+   */
   async find(req: Request, res: Response) {
     const { idGate } = req.params
 
@@ -30,6 +76,32 @@ export class GateController {
     return res.json({ provisional_open: gate?.provisional_open })
   }
 
+  /**
+   * @swagger
+   * /api/gates/{idUser}/user/:
+   *   get:
+   *     summary: Get all gates by user
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idUser
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The user ID
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Gate'
+   */
   async filterByUser(req: Request, res: Response) {
     const { idUser } = req.params
 
@@ -63,6 +135,49 @@ export class GateController {
     return res.json(gates)
   }
 
+  /**
+   * @swagger
+   * /api/gates:
+   *   post:
+   *     summary: Create a new gate
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               cep:
+   *                 type: string
+   *               address:
+   *                 type: string
+   *               complement:
+   *                 type: string
+   *               number:
+   *                 type: string
+   *               city:
+   *                 type: string
+   *               uf:
+   *                 type: string
+   *               image:
+   *                 type: string
+   *     responses:
+   *       201:
+   *         description: Created
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: string
+   */
   async create(req: Request, res: Response) {
     const { name, cep, address, complement, number, city, uf, image } = req.body
 
@@ -93,6 +208,55 @@ export class GateController {
     return res.status(201).json({ id: newGate.id })
   }
 
+  /**
+   * @swagger
+   * /api/gates/{idGate}:
+   *   put:
+   *     summary: Update gate
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idGate
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The gate ID
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               open:
+   *                 type: boolean
+   *               provisional_open:
+   *                 type: boolean
+   *               notified:
+   *                 type: boolean
+   *               cep:
+   *                 type: string
+   *               address:
+   *                 type: string
+   *               complement:
+   *                 type: string
+   *               number:
+   *                 type: string
+   *               city:
+   *                 type: string
+   *               uf:
+   *                 type: string
+   *               image:
+   *                 type: string
+   *     responses:
+   *       204:
+   *         description: No content
+   */
   async update(req: Request, res: Response) {
     const {
       name,
@@ -130,6 +294,26 @@ export class GateController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/gates/{idGate}:
+   *   delete:
+   *     summary: Delete gate
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idGate
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The gate ID
+   *     responses:
+   *       204:
+   *         description: No content
+   */
   async delete(req: Request, res: Response) {
     const { idGate } = req.params
 
@@ -142,6 +326,34 @@ export class GateController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/gates/{idGate}/solicitations/valid:
+   *   put:
+   *     summary: Valid solicitations
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idGate
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The gate ID
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             properties:
+   *               status:
+   *                 type: boolean
+   *     responses:
+   *       204:
+   *         description: No content
+   */
   async validSolicitations(req: Request, res: Response) {
     const { status } = req.body
     const { idGate } = req.params
@@ -192,6 +404,44 @@ export class GateController {
     return res.status(204).send()
   }
 
+  /**
+   * @swagger
+   * /api/gates/{idGate}/solicitations:
+   *   get:
+   *     summary: Get solicitations by gate
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: idGate
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The gate ID
+   *       - in: query
+   *         name: offset
+   *         required: false
+   *         schema:
+   *           type: string
+   *         description: The offset
+   *       - in: query
+   *         name: limit
+   *         required: false
+   *         schema:
+   *           type: string
+   *         description: The limit
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Solicitation'
+   */
   async paging(req: Request, res: Response) {
     const { idGate } = req.params
     const { offset, limit } = req.query
@@ -211,6 +461,19 @@ export class GateController {
     return res.status(200).json(solicitations)
   }
 
+  /**
+   * @swagger
+   * /api/gates/open:
+   *   get:
+   *     summary: Check if the gate is open
+   *     tags:
+   *       - Gates
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       204:
+   *         description: No content
+   */
   async checkGateIsOpen(req: Request, res: Response) {
     const spreadDateToOnline = new Date()
     spreadDateToOnline.setSeconds(

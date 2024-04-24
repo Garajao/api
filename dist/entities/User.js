@@ -15,6 +15,77 @@ const Gate_1 = require("./Gate");
 const Solicitation_1 = require("./Solicitation");
 const Role_1 = require("./Role");
 const Device_1 = require("./Device");
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - id
+ *         - name
+ *         - email
+ *         - login
+ *         - password
+ *         - active
+ *         - created_at
+ *         - updated_at
+ *         - role
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the user
+ *         name:
+ *           type: string
+ *           description: The name of the user
+ *         email:
+ *           type: string
+ *           description: The email of the user
+ *         login:
+ *           type: string
+ *           description: The login of the user
+ *         password:
+ *           type: string
+ *           description: The password of the user
+ *         active:
+ *           type: boolean
+ *           description: The status of the user
+ *         image:
+ *           type: string
+ *           nullable: true
+ *           description: The image URL of the user
+ *         last_login:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *           description: The date and time of the user's last login
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           description: The date and time the user was created
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *           description: The date and time the user was updated
+ *         gates:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Gate'
+ *           description: The gates associated with the user
+ *         solicitations:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Solicitation'
+ *           description: The solicitations made by the user
+ *         role:
+ *           $ref: '#/components/schemas/Role'
+ *           description: The role of the user
+ *         devices:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Device'
+ *           description: The devices associated with the user
+ */
 let User = exports.User = class User {
 };
 __decorate([

@@ -11,12 +11,68 @@ const gateRepository_1 = require("../repositories/gateRepository");
 const roleRepository_1 = require("../repositories/roleRepository");
 const api_errors_1 = require("../helpers/api-errors");
 class UserController {
+    /**
+     * @swagger
+     * /api/users:
+     *   get:
+     *     summary: Get all users
+     *     tags:
+     *       - Users
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/User'
+     */
     async list(req, res) {
         const users = await userRepository_1.userRepository.find({
             loadRelationIds: true,
         });
         return res.status(200).json(users);
     }
+    /**
+     * @swagger
+     * /api/users:
+     *   post:
+     *     summary: Create a new user
+     *     tags:
+     *       - Users
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *               email:
+     *                 type: string
+     *               login:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *               role_id:
+     *                 type: string
+     *     responses:
+     *       201:
+     *         description: Created
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 id:
+     *                   type: string
+     */
     async create(req, res) {
         const { name, email, login, password, image, role_id } = req.body;
         if (!name)
@@ -51,6 +107,46 @@ class UserController {
         await userRepository_1.userRepository.save(newUser);
         return res.status(201).json({ id: newUser.id });
     }
+    /**
+     * @swagger
+     * /api/users/{idUser}:
+     *   put:
+     *     summary: Update user
+     *     tags:
+     *       - Users
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idUser
+     *         required: true
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *               email:
+     *                 type: string
+     *               active:
+     *                 type: boolean
+     *               image:
+     *                 type: string
+     *               role:
+     *                 type: string
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/User'
+     */
     async update(req, res) {
         const { name, email, active, image, role_id } = req.body;
         const { idUser } = req.params;
@@ -69,6 +165,25 @@ class UserController {
         });
         return res.status(204).send();
     }
+    /**
+     * @swagger
+     * /api/users/{idUser}:
+     *   delete:
+     *     summary: Delete user
+     *     tags:
+     *       - Users
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idUser
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       204:
+     *         description: No Content
+     */
     async delete(req, res) {
         const { idUser } = req.params;
         const user = await userRepository_1.userRepository.findOneBy({ id: idUser });
@@ -77,9 +192,54 @@ class UserController {
         await userRepository_1.userRepository.delete(idUser);
         return res.status(204).send();
     }
+    /**
+     * @swagger
+     * /api/users/profile:
+     *   get:
+     *     summary: Get user profile
+     *     tags:
+     *       - Users
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/User'
+     */
     async profile(req, res) {
         return res.status(200).json(req.user);
     }
+    /**
+     * @swagger
+     * /api/users/{idUser}/gate:
+     *   post:
+     *     summary: Add gate to user
+     *     tags:
+     *       - Users
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: idUser
+     *         required: true
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               gate_id:
+     *                 type: string
+     *     responses:
+     *       204:
+     *         description: No Content
+     */
     async userGate(req, res) {
         const { gate_id } = req.body;
         const { idUser } = req.params;
@@ -104,6 +264,37 @@ class UserController {
         await userRepository_1.userRepository.save(userUpdate);
         return res.status(204).send();
     }
+    /**
+     * @swagger
+     * /api/users/signIn:
+     *   post:
+     *     summary: Sign in
+     *     tags:
+     *       - Authorization
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               login:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 user:
+     *                   $ref: '#/components/schemas/User'
+     *                 token:
+     *                   type: string
+     */
     async signIn(req, res) {
         var _a, _b;
         const { login, password } = req.body;
@@ -135,6 +326,26 @@ class UserController {
             token,
         });
     }
+    /**
+     * @swagger
+     * /api/users/signOut:
+     *   post:
+     *     summary: Sign out
+     *     tags:
+     *       - Authorization
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     */
     async signOut(req, res) {
         // const { login, password } = req.body
         return res.status(200).json({

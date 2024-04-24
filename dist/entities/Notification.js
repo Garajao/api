@@ -12,6 +12,52 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Notification = void 0;
 const typeorm_1 = require("typeorm");
 const Device_1 = require("./Device");
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Notification:
+ *       type: object
+ *       required:
+ *         - id
+ *         - title
+ *         - body
+ *         - created_at
+ *         - updated_at
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the notification
+ *         title:
+ *           type: string
+ *           description: The title of the notification
+ *         body:
+ *           type: string
+ *           description: The body of the notification
+ *         expo_id:
+ *           type: string
+ *           nullable: true
+ *           description: The expo id of the notification
+ *         expo_status:
+ *           type: string
+ *           nullable: true
+ *           description: The expo status of the notification
+ *         expo_message:
+ *           type: string
+ *           nullable: true
+ *           description: The expo message of the notification
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           description: The date and time the notification was created
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *           description: The date and time the notification was updated
+ *         device:
+ *           $ref: '#/components/schemas/Device'
+ *           description: The device associated with the notification
+ */
 let Notification = exports.Notification = class Notification {
 };
 __decorate([
